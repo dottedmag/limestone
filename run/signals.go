@@ -2,12 +2,12 @@ package run
 
 import (
 	"context"
+	"log/slog"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"github.com/dottedmag/limestone/tlog"
-	"go.uber.org/zap"
+	"github.com/dottedmag/limestone/llog"
 )
 
 func handleSignals(ctx context.Context) error {
@@ -17,7 +17,7 @@ func handleSignals(ctx context.Context) error {
 
 	select {
 	case sig := <-signals:
-		tlog.Get(ctx).Info("received signal, terminating", zap.Stringer("signal", sig))
+		llog.MustGet(ctx).Info("received signal, terminating", slog.Any("signal", sig))
 		return nil
 	case <-ctx.Done():
 		return ctx.Err()

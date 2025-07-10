@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"log/slog"
 	"net"
 	"net/http"
 	"strings"
@@ -12,10 +13,9 @@ import (
 
 	"time"
 
-	"github.com/gorilla/websocket"
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
+	"github.com/gorilla/websocket"
 )
 
 // Config is the WebSocket configuration
@@ -79,24 +79,24 @@ func Serve(w http.ResponseWriter, r *http.Request, config Config, sessionFn Sess
 		HandshakeTimeout: config.HandshakeTimeout,
 		CheckOrigin:      config.CheckOrigin,
 	}
-	logger := tlog.Get(r.Context())
+	logger := llog.MustGet(r.Context())
 
 	// Copying w.Header gets us, in particular, X-Ridge-Request-ID set by
 	// thttp.Log.
 	ws, err := upgrader.Upgrade(w, r, w.Header().Clone())
 	if err != nil {
-		logger.Error("Failed to serve WebSocket connection", zap.Error(err))
+		logger.Error("Failed to serve WebSocket connection", llog.Error(err))
 		return
 	}
 
 	if err := tuneTCP(ws.UnderlyingConn(), config); err != nil {
 		ws.Close()
-		logger.Error("Failed to serve WebSocket connection", zap.Error(err))
+		logger.Error("Failed to serve WebSocket connection", llog.Error(err))
 		return
 	}
 
 	err = handleSession(r.Context(), ws, config, sessionFn)
-	logger.Info("WebSocket disconnected", zap.Error(err))
+	logger.Info("WebSocket disconnected", llog.Error(err))
 }
 
 // Dial connects to WebSocket server and executes the interaction scenario described by the session function.
@@ -130,7 +130,7 @@ func Dial(ctx context.Context, url string, headers http.Header, config Config, s
 		return fmt.Errorf("failed to establish WebSocket connection to %s: %w", url, err)
 	}
 
-	ctx = tlog.With(ctx, zap.String("url", url), zap.String("requestID", resp.Header.Get("X-Ridge-Request-ID")))
+	ctx = llog.WithArgs(ctx, slog.String("url", url), slog.String("requestID", resp.Header.Get("X-Ridge-Request-ID")))
 	return handleSession(ctx, ws, config, sessionFn)
 }
 
@@ -141,7 +141,7 @@ type Message struct {
 }
 
 func handleSession(ctx context.Context, ws *websocket.Conn, config Config, sessionFn SessionFn) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 	logger.Info("WebSocket established")
 
 	return parallel.Run(ctx, func(ctx context.Context, spawn parallel.SpawnFn) error {

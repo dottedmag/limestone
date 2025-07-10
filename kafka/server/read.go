@@ -11,15 +11,14 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/gorilla/mux"
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/kafka/wire"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/thttp"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
+	"github.com/gorilla/mux"
 )
 
 func (h handler) topicInfo(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +26,7 @@ func (h handler) topicInfo(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
-			tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+			llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 		}
 		return
 	}
@@ -58,7 +57,7 @@ func (h handler) topicPlain(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			if _, err := w.Write([]byte(err.Error())); err != nil {
-				tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+				llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 			}
 			return
 		}
@@ -102,7 +101,7 @@ func (h handler) topicPlain(w http.ResponseWriter, r *http.Request) {
 					must.OK1(buf.Write(msg.Value))
 					must.OK(buf.WriteByte('\n'))
 					if _, err := buf.WriteTo(writer); err != nil {
-						tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+						llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 						return nil
 					}
 				}
@@ -134,7 +133,7 @@ func (h handler) topicWS(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			if _, err := w.Write([]byte(err.Error())); err != nil {
-				tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+				llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 			}
 			return
 		}
@@ -196,7 +195,7 @@ func (h handler) record(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
-			tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+			llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 		}
 		return
 	}
@@ -204,7 +203,7 @@ func (h handler) record(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
-			tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+			llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 		}
 		return
 	}
@@ -234,7 +233,7 @@ func (h handler) record(w http.ResponseWriter, r *http.Request) {
 				must.OK1(buf.Write(msg.Value))
 				must.OK(buf.WriteByte('\n'))
 				if _, err := buf.WriteTo(w); err != nil {
-					tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+					llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 				}
 				return nil
 			}

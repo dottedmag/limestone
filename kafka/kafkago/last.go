@@ -3,12 +3,13 @@ package kafkago
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
-	"github.com/dottedmag/limestone/retry"
-	"github.com/dottedmag/limestone/tlog"
-	"github.com/dottedmag/must"
-	"go.uber.org/zap"
 	"time"
+
+	"github.com/dottedmag/limestone/llog"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/must"
 )
 
 // This timeout includes the time it takes to establish a connection to the broker.
@@ -16,7 +17,7 @@ import (
 const lastOffsetTimeout = time.Minute
 
 func (c *client) LastOffset(ctx context.Context, topic string) (offset int64, err error) {
-	ctx = tlog.With(ctx, zap.String("topic", topic))
+	ctx = llog.WithArgs(ctx, slog.String("topic", topic))
 	err = retry.Do(ctx, readerRetry, func() error {
 		var err error
 		offset, err = c.lastOffset(ctx, topic)

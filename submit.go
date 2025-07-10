@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"reflect"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/typeddb"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
-	"go.uber.org/zap"
 )
 
 func (db *DB) prepareDiff(eid typeddb.EID, change typeddb.Change) wire.Diff {
@@ -60,7 +60,7 @@ func (db *DB) submit(ctx context.Context, tc typeddb.TransactionControl) error {
 		wireTransaction.Audit = json.RawMessage(must.OK1(json.Marshal(annotations)))
 	}
 
-	tlog.Get(ctx).Debug("Submitting transaction", zap.Object("txn", wireTransaction))
+	llog.MustGet(ctx).Debug("Submitting transaction", slog.Any("txn", wireTransaction))
 	if err := db.connection.Submit(ctx, wireTransaction); err != nil {
 		return fmt.Errorf("failed to submit transaction: %w", err)
 	}

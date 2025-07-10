@@ -3,6 +3,7 @@ package converter
 import (
 	"context"
 	"encoding/json"
+	"log/slog"
 	"strings"
 	"testing"
 
@@ -13,7 +14,6 @@ import (
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
-	"go.uber.org/zap"
 )
 
 type testEnv struct {
@@ -132,7 +132,7 @@ func TestTransformChainNotOK(t *testing.T) {
 	require.NoError(t, transform(env.ctx, env.config, env.lc, env.manifest, []step{
 		{
 			name: "apple-color-to-tone",
-			run: func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+			run: func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 				for txn := range source {
 					apple := txn.Changes["apple"]
 					for _, diff := range apple {
@@ -147,7 +147,7 @@ func TestTransformChainNotOK(t *testing.T) {
 		},
 		{
 			name: "apple-tone-value-to-uppercase",
-			run: func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+			run: func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 				for txn := range source {
 					apple := txn.Changes["apple"]
 					for _, diff := range apple {
@@ -195,7 +195,7 @@ func TestTransformChainError(t *testing.T) {
 	err := transform(env.ctx, env.config, env.lc, env.manifest, []step{
 		{
 			name: "apple-color-to-tone",
-			run: func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+			run: func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 				for txn := range source {
 					apple := txn.Changes["apple"]
 					for _, diff := range apple {
@@ -210,7 +210,7 @@ func TestTransformChainError(t *testing.T) {
 		},
 		{
 			name: "fail-on-second-txn",
-			run: func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+			run: func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 				txn, ok := <-source
 				if !ok {
 					return
@@ -225,7 +225,7 @@ func TestTransformChainError(t *testing.T) {
 		},
 		{
 			name: "apple-tone-value-to-uppercase",
-			run: func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+			run: func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 				for txn := range source {
 					apple := txn.Changes["apple"]
 					for _, diff := range apple {

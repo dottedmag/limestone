@@ -3,16 +3,16 @@ package thttp
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net"
 	"net/http"
 	"sync"
 
-	"github.com/dottedmag/limestone/tcontext"
-	"github.com/dottedmag/limestone/tlog"
-	"github.com/dottedmag/must"
-	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
 	"time"
+
+	"github.com/dottedmag/limestone/llog"
+	"github.com/dottedmag/limestone/tcontext"
+	"github.com/dottedmag/parallel"
 )
 
 const gracefulShutdownTimeout = 5 * time.Second
@@ -42,14 +42,14 @@ func (s *Server) Run(ctx context.Context) error {
 	return parallel.Run(ctx, func(ctx context.Context, spawn parallel.SpawnFn) error {
 		panicChan := make(chan error, 1)
 		ctx = context.WithValue(ctx, panicKey, panicChan)
-		ctx = tlog.With(ctx, zap.Stringer("httpServer", s.listener.Addr()))
+		ctx = llog.WithArgs(ctx, slog.String("httpServer", s.listener.Addr().String()))
 		reqCtx, reqCancel := context.WithCancel(tcontext.Reopen(ctx)) // stays open longer than ctx
 
-		logger := tlog.Get(ctx)
+		logger := llog.MustGet(ctx)
 
 		server := http.Server{
 			Handler:     s.handler,
-			ErrorLog:    must.OK1(zap.NewStdLogAt(logger, zap.WarnLevel)),
+			ErrorLog:    slog.NewLogLogger(logger.Handler(), slog.LevelWarn),
 			BaseContext: func(net.Listener) context.Context { return reqCtx },
 			ConnContext: s.connContext,
 		}
@@ -93,7 +93,7 @@ func (s *Server) Run(ctx context.Context) error {
 			err := server.Shutdown(shutdownCtx)
 			if err != nil {
 				if shutdownCtx.Err() != nil { // timeout shutting down
-					logger.Info("Shutdown canceled", zap.Error(err))
+					logger.Info("Shutdown canceled", llog.Error(err))
 					return err
 				}
 
@@ -118,7 +118,7 @@ func (s *Server) ListenAddr() net.Addr {
 }
 
 func (s *Server) connContext(ctx context.Context, conn net.Conn) context.Context {
-	return tlog.With(ctx, zap.Stringer("remoteAddr", conn.RemoteAddr()))
+	return llog.WithArgs(ctx, slog.String("remoteAddr", conn.RemoteAddr().String()))
 }
 
 // This mandatory Middleware ensures that any running handlers prevent the

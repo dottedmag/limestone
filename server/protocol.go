@@ -5,20 +5,20 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 	"strconv"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
 )
 
 func (s server) pull(w http.ResponseWriter, r *http.Request) {
 	tws.Serve(w, r, tws.StreamerConfig, func(ctx context.Context, incoming <-chan tws.Message, outgoing chan<- tws.Message) error {
-		logger := tlog.Get(r.Context())
+		logger := llog.MustGet(r.Context())
 
 		// 1. Read the request
 		var req wire.Request
@@ -37,7 +37,7 @@ func (s server) pull(w http.ResponseWriter, r *http.Request) {
 		// work around Elasticsearch restriction that the same field name cannot be
 		// used for a string value in one message and for an object in any other
 		// message. Revert when it becomes possible.
-		logger.Info("Client connected", zap.Any("limestoneRequest", req))
+		logger.Info("Client connected", slog.Any("limestoneRequest", req))
 		defer logger.Info("Client disconnected")
 
 		// 2. Connect to Kafka
@@ -81,7 +81,7 @@ func (s server) pull(w http.ResponseWriter, r *http.Request) {
 						}
 					}
 					if filtered != 0 {
-						logger.Debug("Sent hot start data", zap.Int("filtered", filtered))
+						logger.Debug("Sent hot start data", slog.Int("filtered", filtered))
 					}
 				}
 
@@ -98,7 +98,7 @@ func (s server) pull(w http.ResponseWriter, r *http.Request) {
 							if hot {
 								continue
 							}
-							logger.Debug("Filtered a batch of transactions and reached hot end", zap.Int("unfiltered", unfiltered), zap.Int("filtered", filtered))
+							logger.Debug("Filtered a batch of transactions and reached hot end", slog.Int("unfiltered", unfiltered), slog.Int("filtered", filtered))
 							unfiltered = 0
 							filtered = 0
 							notification.Hot = true
@@ -142,7 +142,7 @@ func (s server) pull(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s server) push(w http.ResponseWriter, r *http.Request) {
-	logger := tlog.Get(r.Context())
+	logger := llog.MustGet(r.Context())
 
 	version, err := strconv.Atoi(r.URL.Query().Get("version"))
 	if err != nil {
@@ -164,9 +164,9 @@ func (s server) push(w http.ResponseWriter, r *http.Request) {
 
 	var txn wire.Transaction
 	must.OK(json.Unmarshal(must.OK1(io.ReadAll(r.Body)), &txn))
-	logger.Debug("Submitting transaction", zap.Object("txn", txn))
+	logger.Debug("Submitting transaction", slog.Any("txn", txn))
 	if err := s.master.Submit(r.Context(), txn); err != nil {
-		logger.Error("Failed to submit transaction", zap.Error(err))
+		logger.Error("Failed to submit transaction", llog.Error(err))
 		http.Error(w, "failed to submit transaction", http.StatusInternalServerError)
 		return
 	}

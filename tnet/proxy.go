@@ -5,12 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"syscall"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
 )
 
 // WriteOneWayCloser is a io.WriteCloser that can also be closed for writing (TCP stream, SSH channel)
@@ -38,11 +38,11 @@ func handleConn(ctx context.Context, remote closableReaderWriter, localPort int)
 
 	local, err := defaultDialer.DialContext(ctx, "tcp", fmt.Sprintf("127.0.0.1:%d", localPort))
 	if errors.Is(err, syscall.ECONNREFUSED) { // this is not a problem: local port is not being served
-		tlog.Get(ctx).Debug("Closing incoming remote connection, nothing listens locally", zap.Int("port", localPort))
+		llog.MustGet(ctx).Debug("Closing incoming remote connection, nothing listens locally", slog.Int("port", localPort))
 		return nil
 	}
 	if errors.Is(err, syscall.ECONNRESET) { // this is not a problem: local process closed the connection
-		tlog.Get(ctx).Debug("Closing incoming remote connection, local connection reset", zap.Int("port", localPort))
+		llog.MustGet(ctx).Debug("Closing incoming remote connection, local connection reset", slog.Int("port", localPort))
 		return nil
 	}
 	if err != nil {
@@ -75,7 +75,7 @@ func TCPProxy(ctx context.Context, listener net.Listener, localPort int) error {
 				// NB: this connection might be SSH channel. Do not try to change
 				// handleConn parameter to *net.TCPConn
 				conn, err := listener.Accept()
-				tlog.Get(ctx).Debug("Incoming connection", zap.Error(err))
+				llog.MustGet(ctx).Debug("Incoming connection", llog.Error(err))
 				if err != nil {
 					return StripClosedConnectionError(err)
 				}

@@ -7,17 +7,18 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 
+	"time"
+
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/retry"
 	"github.com/dottedmag/limestone/thttp"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
-	"go.uber.org/zap"
-	"time"
 )
 
 const retryInterval = 5 * time.Second
@@ -62,17 +63,17 @@ func (pc protocolClient) Connect(version int, pos wire.Position, filter wire.Fil
 }
 
 func (pc *protocolConnection) Run(ctx context.Context, sink chan<- *wire.IncomingTransaction) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 
 	pc.httpClient = thttp.WithRequestsLogging(&http.Client{})
 	pc.sink = sink
 	close(pc.ready)
 	url := fmt.Sprintf("ws://%s/pull", pc.client.server)
 	for {
-		logger.Debug("Trying to connect to Limestone server", zap.String("url", url))
+		logger.Debug("Trying to connect to Limestone server", slog.String("url", url))
 		err := tws.Dial(ctx, url, nil, tws.StreamerConfig, pc.session)
 		if err != nil && !errors.Is(err, ctx.Err()) {
-			logger.Debug("Connection to Limestone server failed", zap.String("url", url), zap.Error(err))
+			logger.Debug("Connection to Limestone server failed", slog.String("url", url), llog.Error(err))
 		}
 		var mismatch wire.ErrMismatch
 		if errors.As(err, &mismatch) {
@@ -91,14 +92,14 @@ func (pc *protocolConnection) Run(ctx context.Context, sink chan<- *wire.Incomin
 }
 
 func (pc *protocolConnection) session(ctx context.Context, incoming <-chan tws.Message, outgoing chan<- tws.Message) (err error) {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 
 	req := wire.Request{Version: pc.version, Last: pc.pos, Filter: pc.filter, Compact: pc.compact}
 	// FIXME (alexey): request field temporarily renamed to limestoneRequest to
 	// work around Elasticsearch restriction that the same field name cannot be
 	// used for a string value in one message and for an object in any other
 	// message. Revert when it becomes possible.
-	logger.Info("Connected to Limestone server", zap.Any("limestoneRequest", req))
+	logger.Info("Connected to Limestone server", slog.Any("limestoneRequest", req))
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -173,7 +174,7 @@ func (pc *protocolConnection) Submit(ctx context.Context, txn wire.Transaction) 
 
 	url := fmt.Sprintf("http://%s/push?version=%d", pc.client.server, pc.version)
 	body := must.OK1(json.Marshal(txn))
-	ctx = tlog.With(ctx, zap.String("url", url))
+	ctx = llog.WithArgs(ctx, slog.String("url", url))
 
 	return retry.Do(ctx, retry.FixedConfig{RetryAfter: pc.client.retryInterval}, func() error {
 		req := must.OK1(http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(body)))

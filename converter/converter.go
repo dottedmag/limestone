@@ -4,14 +4,15 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
+
+	"time"
 
 	"github.com/dottedmag/limestone/client"
 	"github.com/dottedmag/limestone/converter/xform"
 	"github.com/dottedmag/limestone/kafka"
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/wire"
-	"go.uber.org/zap"
-	"time"
 )
 
 // Config describes the converter configuration
@@ -45,14 +46,14 @@ func DatabaseIsEmpty(ctx context.Context, config Config) (bool, error) {
 
 // Run runs the converter
 func Run(ctx context.Context, config Config) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 	lc := client.NewKafkaClient(config.SourceKafka)
 
 	manifest, err := lc.RetrieveManifest(ctx, true)
 	if err != nil {
 		return err
 	}
-	logger.Info("Retrieved manifest", zap.Object("manifest", manifest))
+	logger.Info("Retrieved manifest", slog.Any("manifest", manifest))
 
 	if manifest.Version > len(config.DBVersionHistory) {
 		panic(fmt.Errorf("actual database version %d is later than target %d", manifest.Version, len(config.DBVersionHistory)))
@@ -60,14 +61,14 @@ func Run(ctx context.Context, config Config) error {
 
 	if manifest.Version == len(config.DBVersionHistory) && !config.Force {
 		if config.HotStartStorage != "" {
-			logger.Info("Database already at target version, refreshing hot start data", zap.Int("manifestVersion", manifest.Version))
+			logger.Info("Database already at target version, refreshing hot start data", slog.Int("manifestVersion", manifest.Version))
 			return refreshHotStart(ctx, config, lc, manifest)
 		}
-		logger.Info("Database already at target version, nothing to do", zap.Int("manifestVersion", manifest.Version))
+		logger.Info("Database already at target version, nothing to do", slog.Int("manifestVersion", manifest.Version))
 		return nil
 	}
 
-	logger.Info("Preparing to upgrade", zap.Int("fromVersion", manifest.Version), zap.Int("toVersion", len(config.DBVersionHistory)))
+	logger.Info("Preparing to upgrade", slog.Int("fromVersion", manifest.Version), slog.Int("toVersion", len(config.DBVersionHistory)))
 	var steps []step
 	for ver := manifest.Version; ver < len(config.DBVersionHistory); ver++ {
 		name := config.DBVersionHistory[ver]

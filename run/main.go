@@ -3,22 +3,19 @@ package run
 import (
 	"context"
 	"errors"
-	"fmt"
+	"log/slog"
 	"os"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
 	"github.com/spf13/pflag"
-	"go.uber.org/zap"
 )
 
 var fs = pflag.NewFlagSet(os.Args[0], pflag.ContinueOnError)
 
 func init() {
 	fs.ParseErrorsWhitelist.UnknownFlags = true
-	fs.String("log-format", "", "Log format (json|text)")
-	fs.String("log-color", "", "Colored logs (yes|no|auto)")
 	fs.BoolP("verbose", "v", false, "Enable verbose (debug level) messages")
 	// Hide usage while parsing the command line here, will be covered by a regular command line parsing.
 	fs.Usage = func() {}
@@ -113,7 +110,7 @@ func Tool(task func(ctx context.Context) error) {
 		return nil
 	})
 	if err != nil {
-		tlog.Get(ctx).Error("Error", zap.Error(err))
+		llog.MustGet(ctx).Error("Error", llog.Error(err))
 	}
 }
 
@@ -144,44 +141,12 @@ type WithExitCode interface {
 	ExitCode() int
 }
 
-// cliConfig returns the Config derived from the command line
-func cliConfig() tlog.Config {
-	if err := fs.Parse(os.Args[1:]); err != nil && !errors.Is(err, pflag.ErrHelp) {
-		fmt.Println(err)
-		os.Exit(2)
-	}
-
-	format := tlog.FormatText
-	if fs.Lookup("log-format").Changed {
-		format = tlog.Format(must.OK1(fs.GetString("log-format")))
-	}
-	color := tlog.ColorAuto
-	if fs.Lookup("log-color").Changed {
-		colorArg := must.OK1(fs.GetString("log-color"))
-		switch colorArg {
-		case "", "auto":
-			color = tlog.ColorAuto
-		case "yes":
-			color = tlog.ColorYes
-		case "no":
-			color = tlog.ColorNo
-		default:
-			panic(fmt.Sprintf("invalid --log-color value %q", colorArg))
-		}
-	}
-	verbose := false
-	if fs.Lookup("verbose").Changed {
-		verbose = must.OK1(fs.GetBool("verbose"))
-	}
-
-	return tlog.Config{
-		Format:  format,
-		Color:   color,
-		Verbose: verbose,
-	}
-}
-
 func rootContext() context.Context {
-	logger := tlog.New(cliConfig())
-	return tlog.WithLogger(context.Background(), logger)
+	level := slog.LevelInfo
+	if fs.Lookup("verbose").Changed && must.OK1(fs.GetBool("verbose")) {
+		level = slog.LevelDebug
+	}
+	return llog.With(context.Background(), slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{
+		Level: level,
+	})))
 }

@@ -3,14 +3,15 @@ package kafkago
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
+	"time"
 
 	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/retry"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/must"
 	"github.com/segmentio/kafka-go"
-	"go.uber.org/zap"
-	"time"
 )
 
 const writerTimeout = time.Minute
@@ -22,7 +23,7 @@ func (c *client) Write(ctx context.Context, topic string, messages []api.Message
 		return nil
 	}
 
-	ctx = tlog.With(ctx, zap.String("topic", topic))
+	ctx = llog.WithArgs(ctx, slog.String("topic", topic))
 	batch := make([]kafka.Message, 0, len(messages))
 	for _, m := range messages {
 		if m.Topic != topic {

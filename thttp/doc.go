@@ -98,7 +98,7 @@
 // For all logging in HTTP handlers, use the logger embedded in the request
 // context:
 //
-//	logger := tlog.Get(r.Context())
+//	logger := llog.MustGet(r.Context())
 //
 // This logger contains the following structured fields:
 //

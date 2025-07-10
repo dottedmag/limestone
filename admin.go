@@ -3,15 +3,15 @@ package limestone
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"reflect"
 
 	"github.com/dottedmag/limestone/client"
 	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/meta"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
-	"go.uber.org/zap"
 )
 
 // Bootstrap initializes a Kafka-based Limestone database:
@@ -22,10 +22,10 @@ import (
 // The administrative transaction created by Bootstrap bypassing restrictions on
 // what producer can write to what section.
 func Bootstrap(ctx context.Context, c kafka.Client, dbVersion int, topic string, obj ...any) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 
 	if txn := adminTransaction(obj); txn != nil {
-		logger.Debug("Publishing bootstrap transaction", zap.Object("txn", *txn))
+		logger.Debug("Publishing bootstrap transaction", slog.Any("txn", *txn))
 		if err := client.PublishKafkaTransaction(ctx, c, topic, *txn); err != nil {
 			return fmt.Errorf("failed to bootstrap Limestone: %w", err)
 		}
@@ -35,7 +35,7 @@ func Bootstrap(ctx context.Context, c kafka.Client, dbVersion int, topic string,
 		Version: dbVersion,
 		Topic:   topic,
 	}
-	logger.Debug("Publishing bootstrap manifest", zap.Object("manifest", manifest))
+	logger.Debug("Publishing bootstrap manifest", slog.Any("manifest", manifest))
 	if err := client.PublishKafkaManifest(ctx, c, manifest); err != nil {
 		return fmt.Errorf("failed to bootstrap Limestone: %w", err)
 	}

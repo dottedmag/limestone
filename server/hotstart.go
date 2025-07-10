@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log/slog"
 	"net"
 	"net/http"
 	"net/url"
@@ -13,11 +14,10 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/retry"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
-	"go.uber.org/zap"
 	"golang.org/x/oauth2/google"
 )
 
@@ -59,7 +59,7 @@ func (s *server) pullHotStart(ctx context.Context, gsURL string) error {
 	}
 	u := fmt.Sprintf("https://storage.googleapis.com/storage/v1/b/%s/o/%s?alt=media",
 		url.QueryEscape(bucket), url.QueryEscape(object))
-	tlog.Get(ctx).Info("Downloading hot start data", zap.String("url", gsURL))
+	llog.MustGet(ctx).Info("Downloading hot start data", slog.String("url", gsURL))
 
 	err = retry.Do(ctx, gsRetryConfig, func() error {
 		resp, err := client.Do(must.OK1(http.NewRequestWithContext(ctx, http.MethodGet, u, nil)))
@@ -74,7 +74,7 @@ func (s *server) pullHotStart(ctx context.Context, gsURL string) error {
 		switch resp.StatusCode {
 		case http.StatusOK:
 		case http.StatusNotFound: // No hot start data: this is not an error
-			tlog.Get(ctx).Info("Hot start data not found", zap.String("url", gsURL))
+			llog.MustGet(ctx).Info("Hot start data not found", slog.String("url", gsURL))
 			return nil
 		default:
 			err := fmt.Errorf("GET %s: %s", u, resp.Status)
@@ -136,7 +136,7 @@ func (s *server) pullHotStart(ctx context.Context, gsURL string) error {
 
 		s.hotStart = messages
 		s.hotStartPos = header.Position
-		tlog.Get(ctx).Info("Hot start data downloaded", zap.String("url", gsURL), zap.Int("objects", objects))
+		llog.MustGet(ctx).Info("Hot start data downloaded", slog.String("url", gsURL), slog.Int("objects", objects))
 		return nil
 	})
 

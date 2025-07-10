@@ -3,14 +3,15 @@ package kafkago
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
+	"time"
 
 	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/retry"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/must"
 	"github.com/segmentio/kafka-go"
-	"go.uber.org/zap"
-	"time"
 )
 
 const (
@@ -21,9 +22,9 @@ const (
 var readerRetry = retry.FixedConfig{RetryAfter: time.Second}
 
 func (c *client) Read(ctx context.Context, topic string, offset int64, dest chan<- *api.IncomingMessage) error {
-	ctx = tlog.With(ctx, zap.String("topic", topic))
-	logger := tlog.Get(ctx)
-	logger.Info("Reading from Kafka topic", zap.Int64("offset", offset))
+	ctx = llog.WithArgs(ctx, slog.String("topic", topic))
+	logger := llog.MustGet(ctx)
+	logger.Info("Reading from Kafka topic", slog.Int64("offset", offset))
 
 	kr := c.kafkaAPI.NewReader(kafka.ReaderConfig{
 		Brokers:  c.brokers,
@@ -75,10 +76,10 @@ func (c *client) Read(ctx context.Context, topic string, offset int64, dest chan
 
 		if !more {
 			if first && count == 0 {
-				logger.Debug("Reached hot end without obtaining any Kafka messages", zap.Int64("offset", offset))
+				logger.Debug("Reached hot end without obtaining any Kafka messages", slog.Int64("offset", offset))
 			} else {
 				logger.Debug("Obtained a batch of Kafka messages and reached hot end",
-					zap.Int("n", count), zap.Int64("first", offsetFrom), zap.Int64("last", offsetTo))
+					slog.Int("n", count), slog.Int64("first", offsetFrom), slog.Int64("last", offsetTo))
 			}
 			count = 0
 

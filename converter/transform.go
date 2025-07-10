@@ -4,18 +4,19 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"runtime/debug"
+
+	"time"
 
 	"github.com/dottedmag/limestone/client"
 	"github.com/dottedmag/limestone/converter/xform"
 	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/tcontext"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
-	"time"
 )
 
 const batchSize = 1000
@@ -38,7 +39,7 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 	for _, step := range steps {
 		names = append(names, step.name)
 	}
-	tlog.Get(ctx).Info("Running upgrade steps", zap.Strings("steps", names), zap.String("newTopic", config.NewTopic))
+	llog.MustGet(ctx).Info("Running upgrade steps", slog.Any("steps", names), slog.String("newTopic", config.NewTopic))
 
 	var active activeSet
 	if config.HotStartStorage != "" {
@@ -48,7 +49,7 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 	maintenance := false
 	defer func() {
 		if maintenance {
-			tlog.Get(ctx).Info("Canceling database maintenance", zap.Object("manifest", manifest))
+			llog.MustGet(ctx).Info("Canceling database maintenance", slog.Any("manifest", manifest))
 			_ = client.PublishKafkaManifest(tcontext.Reopen(ctx), config.DestKafka, manifest)
 		}
 	}()
@@ -68,7 +69,7 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 			if !config.DryRun {
 				maintenanceManifest := manifest
 				maintenanceManifest.Maintenance = true
-				tlog.Get(ctx).Info("Hot end reached, announcing database maintenance", zap.Object("manifest", maintenanceManifest))
+				llog.MustGet(ctx).Info("Hot end reached, announcing database maintenance", slog.Any("manifest", maintenanceManifest))
 
 				maintenance = true
 				if err := client.PublishKafkaManifest(tcontext.Reopen(ctx), config.DestKafka, maintenanceManifest); err != nil {
@@ -88,7 +89,7 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 				}
 			}
 
-			tlog.Get(ctx).Info("Reading complete")
+			llog.MustGet(ctx).Info("Reading complete")
 			return nil
 		})
 
@@ -111,7 +112,7 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 					close(to)
 				}()
 
-				step.run(tlog.Get(ctx), from, to)
+				step.run(llog.MustGet(ctx), from, to)
 
 				// Safety check: all transactions must be consumed
 				select {
@@ -200,18 +201,18 @@ func transform(ctx context.Context, config Config, lc client.KafkaClient, manife
 			return err
 		}
 		gsURL := fmt.Sprintf("%s%v", config.HotStartStorage, newManifest.Version)
-		tlog.Get(ctx).Info("Uploading hot start data", zap.String("url", gsURL), zap.Any("header", header))
+		llog.MustGet(ctx).Info("Uploading hot start data", slog.String("url", gsURL), slog.Any("header", header))
 		// FIXME (alexey): implmenet Google retry policy
 		if err := uploadActiveSet(ctx, gsURL, header, active); err != nil {
-			tlog.Get(ctx).Warn("Hot start data failed to upload", zap.String("url", gsURL), zap.Error(err))
+			llog.MustGet(ctx).Warn("Hot start data failed to upload", slog.String("url", gsURL), llog.Error(err))
 		} else {
-			tlog.Get(ctx).Info("Hot start data uploaded", zap.String("url", gsURL))
+			llog.MustGet(ctx).Info("Hot start data uploaded", slog.String("url", gsURL))
 		}
 	}
 	if config.DryRun {
-		tlog.Get(ctx).Info("Not publishing new manifest becase of --dry-run", zap.Object("manifest", newManifest))
+		llog.MustGet(ctx).Info("Not publishing new manifest becase of --dry-run", slog.Any("manifest", newManifest))
 	} else {
-		tlog.Get(ctx).Info("Publishing new manifest", zap.Object("manifest", newManifest))
+		llog.MustGet(ctx).Info("Publishing new manifest", slog.Any("manifest", newManifest))
 		if err := client.PublishKafkaManifest(ctx, config.DestKafka, newManifest); err != nil {
 			return err
 		}
@@ -243,15 +244,15 @@ func refreshHotStart(ctx context.Context, config Config, lc client.KafkaClient, 
 	gsURL := fmt.Sprintf("%s%v", config.HotStartStorage, manifest.Version)
 	now := time.Now()
 
-	tlog.Get(ctx).Info("Downloading hot start data", zap.String("url", gsURL))
+	llog.MustGet(ctx).Info("Downloading hot start data", slog.String("url", gsURL))
 	header, active, err := downloadActiveSet(ctx, gsURL, config.Survive)
 	if err != nil {
-		tlog.Get(ctx).Warn("Hot start data failed to download", zap.String("url", gsURL), zap.Error(err))
+		llog.MustGet(ctx).Warn("Hot start data failed to download", slog.String("url", gsURL), llog.Error(err))
 		active = nil
 	} else {
-		tlog.Get(ctx).Info("Hot start data downloaded", zap.String("url", gsURL))
+		llog.MustGet(ctx).Info("Hot start data downloaded", slog.String("url", gsURL))
 		if header.Version != manifest.Version {
-			tlog.Get(ctx).Warn("Hot start data discarded: version mismatch", zap.Int("expected", manifest.Version), zap.Int("actual", header.Version))
+			llog.MustGet(ctx).Warn("Hot start data discarded: version mismatch", slog.Int("expected", manifest.Version), slog.Int("actual", header.Version))
 			active = nil
 		}
 	}
@@ -289,11 +290,11 @@ func refreshHotStart(ctx context.Context, config Config, lc client.KafkaClient, 
 		return err
 	}
 
-	tlog.Get(ctx).Info("Uploading hot start data", zap.String("url", gsURL), zap.Any("header", header))
+	llog.MustGet(ctx).Info("Uploading hot start data", slog.String("url", gsURL), slog.Any("header", header))
 	if err := uploadActiveSet(ctx, gsURL, header, active); err != nil {
-		tlog.Get(ctx).Warn("Hot start data failed to upload", zap.String("url", gsURL), zap.Error(err))
+		llog.MustGet(ctx).Warn("Hot start data failed to upload", slog.String("url", gsURL), llog.Error(err))
 	} else {
-		tlog.Get(ctx).Info("Hot start data uploaded", zap.String("url", gsURL))
+		llog.MustGet(ctx).Info("Hot start data uploaded", slog.String("url", gsURL))
 	}
 	return nil
 }

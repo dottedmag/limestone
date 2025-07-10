@@ -4,8 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dottedmag/limestone/tlog"
-	"go.uber.org/zap"
+	"github.com/dottedmag/limestone/llog"
 )
 
 func (h handler) topics(w http.ResponseWriter, r *http.Request) {
@@ -13,11 +12,11 @@ func (h handler) topics(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
-			tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+			llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 			return
 		}
 	}
 	if _, err := w.Write([]byte(strings.Join(topics, "\n") + "\n")); err != nil {
-		tlog.Get(r.Context()).Info("Failed to write response", zap.Error(err))
+		llog.MustGet(r.Context()).Info("Failed to write response", llog.Error(err))
 	}
 }

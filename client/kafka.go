@@ -5,15 +5,15 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log/slog"
 	"regexp"
 	"strconv"
 
 	"github.com/dottedmag/limestone/kafka"
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
 )
 
 // KafkaClient is an implementation of Client that works with Kafka directly
@@ -136,9 +136,9 @@ func lastManifest(ctx context.Context, messages <-chan *kafka.IncomingMessage, w
 		}
 
 		if res.Maintenance {
-			tlog.Get(ctx).Info("Database under maintenance, waiting", zap.Object("manifest", res))
+			llog.MustGet(ctx).Info("Database under maintenance, waiting", slog.Any("manifest", res))
 		} else {
-			tlog.Get(ctx).Info("Database version is too low, waiting", zap.Int("manifestVersion", res.Version), zap.Int("versionAtLeast", versionAtLeast))
+			llog.MustGet(ctx).Info("Database version is too low, waiting", slog.Int("manifestVersion", res.Version), slog.Int("versionAtLeast", versionAtLeast))
 		}
 
 		lastMsg = nil
@@ -174,7 +174,7 @@ func (kc KafkaClient) RetrieveManifest(ctx context.Context, waitForManifest bool
 }
 
 func (kc *kafkaConnection) Run(ctx context.Context, sink chan<- *wire.IncomingTransaction) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 	return parallel.Run(ctx, func(ctx context.Context, spawn parallel.SpawnFn) error {
 		var incomingMaster chan *kafka.IncomingMessage
 		if kc.maintenance {
@@ -191,7 +191,7 @@ func (kc *kafkaConnection) Run(ctx context.Context, sink chan<- *wire.IncomingTr
 			if err != nil {
 				return err
 			}
-			logger.Debug("Retrieved manifest from Kafka", zap.Object("manifest", manifest))
+			logger.Debug("Retrieved manifest from Kafka", slog.Any("manifest", manifest))
 			kc.manifest = manifest
 
 			if kc.manifest.Version != kc.version {
@@ -211,7 +211,7 @@ func (kc *kafkaConnection) Run(ctx context.Context, sink chan<- *wire.IncomingTr
 		incoming := make(chan *kafka.IncomingMessage)
 		spawn("reader", parallel.Fail, func(ctx context.Context) error {
 			offset := kc.pos.offset + 1
-			logger.Info("Reading Kafka topic", zap.String("topic", kc.manifest.Topic), zap.Int64("offset", offset))
+			logger.Info("Reading Kafka topic", slog.String("topic", kc.manifest.Topic), slog.Int64("offset", offset))
 			return kc.client.Read(ctx, kc.manifest.Topic, offset, incoming)
 		})
 

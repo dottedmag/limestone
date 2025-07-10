@@ -4,8 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/dottedmag/limestone/tlog"
 	"time"
+
+	"github.com/dottedmag/limestone/llog"
 )
 
 // Context returns a new testing context.
@@ -15,7 +16,7 @@ import (
 // replacements.
 func Context(t *testing.T) context.Context {
 	ctx := context.Background()
-	return tlog.WithLogger(ctx, tlog.NewForTesting(t))
+	return llog.With(ctx, llog.NewForTesting(t))
 }
 
 // ContextWithTimeout is a version of TestContext with a timeout.

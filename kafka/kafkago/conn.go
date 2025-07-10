@@ -2,10 +2,10 @@ package kafkago
 
 import (
 	"context"
+	"log/slog"
 	"math/rand" // choosing a random member of Kafka replicaset - not security-sensitive
 
-	"github.com/dottedmag/limestone/tlog"
-	"go.uber.org/zap"
+	"github.com/dottedmag/limestone/llog"
 )
 
 func (c *client) shuffledBrokers() []string {
@@ -25,7 +25,7 @@ func (c *client) getKafkaConn(ctx context.Context, topic string) (kafkaConn, err
 		return conn, nil
 	}
 
-	logger := tlog.Get(ctx).With(zap.String("topic", topic))
+	logger := llog.MustGet(ctx).With(slog.String("topic", topic))
 
 	var conn kafkaConn
 	var err error
@@ -33,26 +33,26 @@ func (c *client) getKafkaConn(ctx context.Context, topic string) (kafkaConn, err
 		conn, err = c.kafkaAPI.DialLeader(ctx, "tcp", address, topic, 0)
 		if err == nil {
 			c.conn[topic] = conn
-			logger.Debug("Connected to Kafka for writing", zap.String("address", address))
+			logger.Debug("Connected to Kafka for writing", slog.String("address", address))
 			break
 		}
-		logger.Warn("Failed to connect to Kafka for writing", zap.Error(err), zap.String("address", address))
+		logger.Warn("Failed to connect to Kafka for writing", llog.Error(err), slog.String("address", address))
 	}
 	return conn, err
 }
 
 func (c *client) connectMaster(ctx context.Context) (kafkaConn, error) {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 
 	var conn kafkaConn
 	var err error
 	for _, address := range c.shuffledBrokers() {
 		conn, err = c.kafkaAPI.DialContext(ctx, "tcp", address)
 		if err == nil {
-			logger.Info("Connected to Kafka", zap.String("address", address))
+			logger.Info("Connected to Kafka", slog.String("address", address))
 			return conn, nil
 		}
-		logger.Warn("Failed to connect to Kafka", zap.Error(err), zap.String("address", address))
+		logger.Warn("Failed to connect to Kafka", llog.Error(err), slog.String("address", address))
 	}
 	return conn, err
 }

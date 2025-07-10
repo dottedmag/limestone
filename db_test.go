@@ -12,8 +12,8 @@ import (
 	"github.com/dottedmag/limestone/indices"
 	"github.com/dottedmag/limestone/kafka"
 	"github.com/dottedmag/limestone/kafka/mock"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/test"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
@@ -96,7 +96,7 @@ func createDB(kafka kafka.Client, group *parallel.Group, source Source, opt ...o
 		Client:   client.NewKafkaClient(kafka),
 		Entities: KindList{kindFoo, kindBar},
 		Source:   source,
-		Logger:   tlog.Get(group.Context()),
+		Logger:   llog.MustGet(group.Context()),
 		Session:  1,
 	}
 

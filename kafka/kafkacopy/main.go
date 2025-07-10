@@ -5,17 +5,17 @@ package kafkacopy
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"github.com/dottedmag/limestone/kafka"
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/kafka/isempty"
 	"github.com/dottedmag/limestone/kafka/names"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/run"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
 	"github.com/spf13/pflag"
-	"go.uber.org/zap"
 )
 
 const batchSize = 1000
@@ -63,7 +63,7 @@ func Run(ctx context.Context, config Config) error {
 				return err
 			}
 		}
-		tlog.Get(ctx).Info("Preparing to copy topics", zap.Strings("topics", topics))
+		llog.MustGet(ctx).Info("Preparing to copy topics", slog.Any("topics", topics))
 		for _, topic := range topics {
 			name := fmt.Sprintf(config.Rename, topic)
 			if err := names.ValidateTopicName(name); err != nil {
@@ -89,7 +89,7 @@ func Run(ctx context.Context, config Config) error {
 
 func copyTopic(ctx context.Context, client1 api.Client, topic1 string, client2 api.Client, topic2 string) error {
 	return parallel.Run(ctx, func(ctx context.Context, spawn parallel.SpawnFn) error {
-		logger := tlog.Get(ctx).With(zap.String("fromTopic", topic1), zap.String("toTopic", topic2))
+		logger := llog.MustGet(ctx).With(slog.String("fromTopic", topic1), slog.String("toTopic", topic2))
 		logger.Info("Started copying")
 		messages := make(chan *api.IncomingMessage, batchSize)
 		spawn("reader", parallel.Fail, func(ctx context.Context) error {
@@ -122,7 +122,7 @@ func copyTopic(ctx context.Context, client1 api.Client, topic1 string, client2 a
 					}
 
 					if msg == nil {
-						logger.Info("Finished copying", zap.Int64("messagesCopied", n))
+						logger.Info("Finished copying", slog.Int64("messagesCopied", n))
 						return nil
 					}
 

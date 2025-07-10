@@ -1,9 +1,10 @@
 package xform
 
 import (
+	"log/slog"
+
 	"github.com/dottedmag/limestone/converter/convertdb"
 	"github.com/dottedmag/limestone/wire"
-	"go.uber.org/zap"
 )
 
 // ForEachWithState is a shorthand for writing a typical stateful upgrade
@@ -28,7 +29,7 @@ import (
 //	    kinds         = convertdb.KindList{kindForwarder}
 //	)
 //
-//	var Transform = xform.ForEachWithState(func(logger *zap.Logger, txn convertdb.Transaction) bool {
+//	var Transform = xform.ForEachWithState(func(logger *slog.Logger, txn convertdb.Transaction) bool {
 //	     xform.DeleteEntity(txn.Other, "old_entity")
 //	     xform.DeleteFields(txn.Other, "another_entity", "Field1", "Field2")
 //
@@ -45,8 +46,8 @@ import (
 //	     }
 //	     return clearProducer
 //	})
-func ForEachWithState(kinds convertdb.KindList, conv func(logger *zap.Logger, txn convertdb.Transaction) bool) Transformation {
-	return func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+func ForEachWithState(kinds convertdb.KindList, conv func(logger *slog.Logger, txn convertdb.Transaction) bool) Transformation {
+	return func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 		db := convertdb.New(kinds)
 		for rawTxn := range source {
 			txn := db.Transaction(rawTxn)

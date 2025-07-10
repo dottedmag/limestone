@@ -5,12 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 	"strings"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/must"
-	"go.uber.org/zap"
 )
 
 const maxLogBodyLen = 1024 - 3 // make room for 3 dots
@@ -20,15 +20,15 @@ const maxLogBodyLen = 1024 - 3 // make room for 3 dots
 // Only has an effect when debug logging is enabled.
 func LogBodies(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		logger := tlog.Get(req.Context())
-		if !logger.Core().Enabled(zap.DebugLevel) {
+		logger := llog.MustGet(req.Context())
+		if !logger.Enabled(req.Context(), slog.LevelDebug) {
 			next.ServeHTTP(w, req)
 			return
 		}
 
 		if shouldLogBody(req.Header) {
 			req.Body = createReadCloserCapture(req.Body, func(p []byte, _ bool) {
-				logger.Debug("HTTP request body", zap.String("contentType", contentType(req.Header)), zap.ByteString("requestData", p))
+				logger.Debug("HTTP request body", slog.String("contentType", contentType(req.Header)), slog.String("requestData", string(p)))
 			})
 		}
 
@@ -39,7 +39,7 @@ func LogBodies(next http.Handler) http.Handler {
 		}
 		next.ServeHTTP(crw, req)
 		if shouldLogBody(crw.ResponseWriter.Header()) {
-			logger.Debug("HTTP response body", zap.String("contentType", contentType(crw.ResponseWriter.Header())), zap.ByteString("body", crw.buff.Bytes()))
+			logger.Debug("HTTP response body", slog.String("contentType", contentType(crw.ResponseWriter.Header())), slog.String("body", string(crw.buff.Bytes())))
 		}
 	})
 }
@@ -115,11 +115,11 @@ func (crw *captureResponseWriter) Write(p []byte) (int, error) {
 }
 
 // JSONResult writes HTTP error code and JSON
-func JSONResult(logger *zap.Logger, writer http.ResponseWriter, res any, code int) {
+func JSONResult(logger *slog.Logger, writer http.ResponseWriter, res any, code int) {
 	body := must.OK1(json.Marshal(res))
 	writer.Header().Add("Content-Type", "application/json")
 	writer.WriteHeader(code)
 	if _, err := writer.Write(body); err != nil {
-		logger.Debug("failed to write response to client", zap.Error(err))
+		logger.Debug("failed to write response to client", llog.Error(err))
 	}
 }

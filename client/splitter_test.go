@@ -74,7 +74,7 @@ func TestFilterUnion(t *testing.T) {
 		"foo": []string{"x"},
 		"bar": []string{"b", "c"},
 		"baz": nil,
-		"zap": []string{"w"},
+		"uvw": []string{"w"},
 	}
 
 	var f wire.Filter
@@ -95,6 +95,6 @@ func TestFilterUnion(t *testing.T) {
 		"bar": []string{"a", "b", "c"},
 		"baz": nil,
 		"qux": []string{"y"},
-		"zap": []string{"w"},
+		"uvw": []string{"w"},
 	}, f)
 }

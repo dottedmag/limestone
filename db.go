@@ -3,17 +3,17 @@ package limestone
 import (
 	"context"
 	"fmt"
+	"log/slog"
 
 	"time"
 
 	"github.com/dottedmag/limestone/client"
 	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/meta"
 	"github.com/dottedmag/limestone/scheduler"
-	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/typeddb"
 	"github.com/dottedmag/limestone/wire"
-	"go.uber.org/zap"
 )
 
 // Snapshot is a read-only snapshot of the database.
@@ -98,7 +98,7 @@ type Config struct {
 	Source
 
 	// Logger is a logger to be used for logging in DB sync.
-	Logger *zap.Logger
+	Logger *slog.Logger
 
 	// The following field is to be left empty except in tests
 	Session int64
@@ -145,7 +145,7 @@ type DB struct {
 	readyCancel context.CancelFunc
 	ready       bool
 
-	logger             *zap.Logger
+	logger             *slog.Logger
 	monitoringInstance string
 	debugTap           chan<- Snapshot
 }
@@ -214,7 +214,7 @@ func (db *DB) DoE(fn func(txn Transaction) error) error {
 	txn, tc := db.tdb.Transaction()
 	defer tc.Cancel()
 
-	ctx := tlog.WithLogger(context.Background(), db.logger) // for logging only
+	ctx := llog.With(context.Background(), db.logger) // for logging only
 
 	if err := fn(txn); err != nil {
 		return err
@@ -309,8 +309,8 @@ func (db *DB) WaitReady(ctx context.Context) error {
 
 func (db *DB) schedule(eid typeddb.EID, when time.Time) {
 	if !when.IsZero() {
-		db.logger.Debug("Scheduling alarm", zap.Stringer("eid", eid), zap.Time("when", when),
-			zap.Duration("left", time.Until(when)))
+		db.logger.Debug("Scheduling alarm", slog.Any("eid", eid), slog.Time("when", when),
+			slog.Duration("left", time.Until(when)))
 	}
 	db.scheduler.Schedule(eid, when)
 }

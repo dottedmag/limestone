@@ -1,8 +1,9 @@
 package xform
 
 import (
+	"log/slog"
+
 	"github.com/dottedmag/limestone/wire"
-	"go.uber.org/zap"
 )
 
 // Transformation is a database upgrade or other cleanup procedure that takes a
@@ -17,4 +18,4 @@ import (
 // must be in a strictly ascending order.
 //
 // Panic to fail the transformation.
-type Transformation func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction)
+type Transformation func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction)

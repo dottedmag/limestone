@@ -24,7 +24,7 @@
 //
 // Example:
 //
-//	func Transform(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+//	func Transform(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 //	    db := convertdb.New(convertdb.KindList{kindFoo, kindBar})
 //	    for rawTxn := range source {
 //	        txn := db.Transaction(rawTxn)
@@ -50,7 +50,7 @@
 //
 //	var kinds = convertdb.KindList{kindFoo, kindBar}
 //
-//	var Transform = xform.ForEachWithState(kinds, conv func(logger *zap.Logger, txn convertdb.Transaction) bool {
+//	var Transform = xform.ForEachWithState(kinds, conv func(logger *slog.Logger, txn convertdb.Transaction) bool {
 //	    // ...Manipulate the entities in txn...
 //	    // ...Manipulate txn.Other...
 //

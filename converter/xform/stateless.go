@@ -2,9 +2,9 @@ package xform
 
 import (
 	"fmt"
+	"log/slog"
 
 	"github.com/dottedmag/limestone/wire"
-	"go.uber.org/zap"
 )
 
 // ForEach is a shorthand for writing a typical stateless upgrade
@@ -16,12 +16,12 @@ import (
 //
 // Example:
 //
-//	var Transform = xform.ForEach(func(logger *zap.Logger, txn *wire.Transaction) {
+//	var Transform = xform.ForEach(func(logger *slog.Logger, txn *wire.Transaction) {
 //	    xform.DeleteEntity(txn.Changes, "old_entity")
 //	    xform.DeleteFields(txn.Changes, "another_entity", "Field1", "Field2")
 //	})
-func ForEach(conv func(logger *zap.Logger, txn *wire.Transaction)) Transformation {
-	return func(logger *zap.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
+func ForEach(conv func(logger *slog.Logger, txn *wire.Transaction)) Transformation {
+	return func(logger *slog.Logger, source <-chan wire.Transaction, dest chan<- wire.Transaction) {
 		for txn := range source {
 			conv(logger, &txn)
 			txn.Changes.Optimize()

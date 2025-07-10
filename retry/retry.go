@@ -3,10 +3,11 @@ package retry
 import (
 	"context"
 	"errors"
+	"log/slog"
 
-	"github.com/dottedmag/limestone/tlog"
-	"go.uber.org/zap"
 	"time"
+
+	"github.com/dottedmag/limestone/llog"
 )
 
 // DelayFn is the type of function that can be called repeatedly to produce
@@ -113,20 +114,20 @@ func Do(ctx context.Context, c Config, f func() error) error {
 	var lastMessage string
 	var r ErrRetriable
 	for i := 0; ; i++ {
-		logger := tlog.Get(ctx).With(zap.Int("attempts", i+1))
+		logger := llog.MustGet(ctx).With(slog.Int("attempts", i+1))
 
 		delay, ok := delays()
 		if !ok {
 			if i == 0 {
 				panic("ok is false on first attempt")
 			}
-			logger.Debug("Retry failed after maximum number of attempts", zap.Error(r.err), zap.Duration("duration", time.Since(startedAt)))
+			logger.Debug("Retry failed after maximum number of attempts", llog.Error(r.err), slog.Duration("duration", time.Since(startedAt)))
 			return r.err
 		}
 
 		if err := Sleep(ctx, delay); err != nil {
 			if i > 0 {
-				logger.Debug("Retry canceled", zap.Error(err), zap.Duration("duration", time.Since(startedAt)))
+				logger.Debug("Retry canceled", llog.Error(err), slog.Duration("duration", time.Since(startedAt)))
 			}
 			return err
 		}
@@ -134,23 +135,23 @@ func Do(ctx context.Context, c Config, f func() error) error {
 		if err := f(); !errors.As(err, &r) {
 			if i > 0 {
 				if err != nil {
-					logger.Debug("Retry finished with non-retriable error", zap.Error(err), zap.Duration("duration", time.Since(startedAt)))
+					logger.Debug("Retry finished with non-retriable error", llog.Error(err), slog.Duration("duration", time.Since(startedAt)))
 				} else {
-					logger.Debug("Retry succeeded", zap.Duration("duration", time.Since(startedAt)))
+					logger.Debug("Retry succeeded", slog.Duration("duration", time.Since(startedAt)))
 				}
 			}
 			return err
 		}
 		if errors.Is(r.err, ctx.Err()) {
 			if i > 0 {
-				logger.Debug("Retry canceled", zap.Error(r.err), zap.Duration("duration", time.Since(startedAt)))
+				logger.Debug("Retry canceled", llog.Error(r.err), slog.Duration("duration", time.Since(startedAt)))
 			}
 			return r.err // f wants to retry but the context is closing
 		}
 
 		newMessage := r.err.Error()
 		if lastMessage != newMessage {
-			logger.Debug("Will retry", zap.Error(r.err))
+			logger.Debug("Will retry", llog.Error(r.err))
 			lastMessage = newMessage
 		}
 	}

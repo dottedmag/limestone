@@ -3,13 +3,13 @@ package limestone
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"reflect"
 
-	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/llog"
 	"github.com/dottedmag/limestone/typeddb"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/parallel"
-	"go.uber.org/zap"
 )
 
 // Run executes the Limestone reading pump.
@@ -31,7 +31,7 @@ func (db *DB) Run(ctx context.Context) error {
 }
 
 func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) error {
-	logger := tlog.Get(ctx)
+	logger := llog.MustGet(ctx)
 
 	var txn Transaction
 	var tc typeddb.TransactionControl
@@ -53,11 +53,11 @@ func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) 
 		select {
 		case incoming = <-ch:
 			if incoming == nil {
-				logger.Debug("Reached hot end", zap.Any("position", lastPos))
+				logger.Debug("Reached hot end", slog.Any("position", lastPos))
 			}
 		case <-db.scheduler.Wait():
 			for _, key := range db.scheduler.Get() {
-				logger.Debug("Alarm", zap.Stringer("eid", key))
+				logger.Debug("Alarm", slog.Any("eid", key))
 				attention[key] = true
 			}
 		case <-ctx.Done():
@@ -70,7 +70,7 @@ func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) 
 				continue // ignoring echoed transaction
 			}
 			if db.ready {
-				logger.Debug("Handling transaction", zap.Object("txn", incoming))
+				logger.Debug("Handling transaction", slog.Any("txn", incoming))
 			} else {
 				caughtUpCount++
 			}
@@ -156,9 +156,9 @@ func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) 
 						}
 					}
 					if db.ready {
-						logger.Debug("Waking up", zap.Int("entities", len(entities)), zap.Strings("eids", eids))
+						logger.Debug("Waking up", slog.Int("entities", len(entities)), slog.Any("eids", eids))
 					} else {
-						logger.Debug("Waking up for the first time", zap.Int("entities", len(entities)))
+						logger.Debug("Waking up for the first time", slog.Int("entities", len(entities)))
 					}
 
 					if err := db.submit(ctx, tc); err != nil {
@@ -184,7 +184,7 @@ func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) 
 			}
 
 			if !db.ready {
-				logger.Info("Limestone ready", zap.Int("transactions", caughtUpCount), zap.Any("position", lastPos))
+				logger.Info("Limestone ready", slog.Int("transactions", caughtUpCount), slog.Any("position", lastPos))
 				db.ready = true
 				db.readyCancel()
 			}

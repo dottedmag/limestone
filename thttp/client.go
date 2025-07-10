@@ -3,11 +3,11 @@ package thttp
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/dottedmag/limestone/tlog"
-	"go.uber.org/zap"
+	"github.com/dottedmag/limestone/llog"
 )
 
 // LoggingTransport is HTTP transport with logging
@@ -51,16 +51,16 @@ func checkRedirect(req *http.Request, via []*http.Request) error {
 // A RoundTripper must be safe for concurrent use by multiple
 // goroutines.
 func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	if !tlog.Get(req.Context()).Core().Enabled(zap.DebugLevel) {
+	if !llog.MustGet(req.Context()).Enabled(req.Context(), slog.LevelDebug) {
 		return t.Transport.RoundTrip(req)
 	}
 
-	logger := tlog.Get(req.Context()).With(zap.String("method", req.Method), zap.Stringer("url", req.URL))
+	logger := llog.MustGet(req.Context()).With(slog.String("method", req.Method), slog.Any("url", req.URL))
 
 	req.Body = createReadCloserCapture(req.Body, func(p []byte, _ bool) {
-		logFields := []zap.Field{zap.String("contentType", contentType(req.Header))}
+		logFields := []any{slog.String("contentType", contentType(req.Header))}
 		if !t.SkipRequestBody && shouldLogBody(req.Header) {
-			logFields = append(logFields, zap.ByteString("requestData", p))
+			logFields = append(logFields, slog.String("requestData", string(p)))
 		}
 		logger.Debug("HTTP request ended", logFields...)
 	})
@@ -68,25 +68,25 @@ func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	logger.Debug("HTTP request started")
 	resp, err := t.Transport.RoundTrip(req)
 	if err != nil {
-		logger.Debug("HTTP request failed", zap.Error(err))
+		logger.Debug("HTTP request failed", llog.Error(err))
 		return resp, err
 	}
 
 	resp.Body = createReadCloserCapture(resp.Body, func(p []byte, eof bool) {
-		logFields := []zap.Field{
-			zap.String("status", resp.Status),
-			zap.String("contentType", contentType(resp.Header)),
-			zap.Bool("readAllBody", eof),
+		logFields := []any{
+			slog.String("status", resp.Status),
+			slog.String("contentType", contentType(resp.Header)),
+			slog.Bool("readAllBody", eof),
 		}
 		// requestID and correlationID are helpful to identify requests from third-parties, in case we receive an unexpected response
 		if requestID, ok := resp.Header["X-Request-Id"]; ok && len(requestID) != 0 {
-			logFields = append(logFields, zap.String("requestID", requestID[0]))
+			logFields = append(logFields, slog.String("requestID", requestID[0]))
 		}
 		if correlationID, ok := resp.Header["X-Correlation-Id"]; ok && len(correlationID) != 0 {
-			logFields = append(logFields, zap.String("correlationID", correlationID[0]))
+			logFields = append(logFields, slog.String("correlationID", correlationID[0]))
 		}
 		if shouldLogBody(resp.Header) {
-			logFields = append(logFields, zap.ByteString("responseData", p))
+			logFields = append(logFields, slog.String("responseData", string(p)))
 		}
 		logger.Debug("HTTP response ended", logFields...)
 	})

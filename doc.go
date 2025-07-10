@@ -265,7 +265,7 @@
 //	    Kafka:    k,
 //	    Entities: limestone.KindList{kindFleet},
 //	    Source:   limestone.Source{Producer: "allocator"},
-//	    Logger:   tlog.Get(ctx),
+//	    Logger:   llog.MustGet(ctx),
 //	})
 //	go mockManager.Run(ctx)
 //
@@ -276,7 +276,7 @@
 //	    Kafka:    k,
 //	    Entities: limestone.KindList{kindInstance},
 //	    Source:   limestone.Source{Producer: "example-service"},
-//	    Logger:   tlog.Get(ctx),
+//	    Logger:   llog.MustGet(ctx),
 //	    DebugTap: tapDCM,
 //	})
 //	go mockDCM.Run(ctx)
