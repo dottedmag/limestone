@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/hashicorp/go-memdb"
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/meta"
 	"github.com/stretchr/testify/require"
 )
 

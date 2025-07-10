@@ -9,8 +9,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ridge/limestone/test"
-	"github.com/ridge/limestone/tnet"
+	"github.com/dottedmag/limestone/test"
+	"github.com/dottedmag/limestone/tnet"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"

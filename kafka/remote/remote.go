@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ridge/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/api"
 )
 
 type client struct {

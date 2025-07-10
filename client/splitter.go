@@ -4,7 +4,7 @@ import (
 	"context"
 	"sync"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/parallel"
 )
 

@@ -8,7 +8,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ridge/limestone/retry"
+	"github.com/dottedmag/limestone/retry"
 )
 
 // MaybeRetriableError converts given network error into

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/retry"
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/must/v2"
 	"github.com/segmentio/kafka-go"
 	"go.uber.org/zap"

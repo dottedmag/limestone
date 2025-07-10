@@ -1,7 +1,7 @@
 package xform
 
 import (
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 	"go.uber.org/zap"
 )
 

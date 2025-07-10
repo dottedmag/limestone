@@ -13,9 +13,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ridge/limestone/retry"
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2/google"

@@ -8,13 +8,13 @@ import (
 
 	"time"
 
-	"github.com/ridge/limestone/client"
-	"github.com/ridge/limestone/indices"
-	"github.com/ridge/limestone/kafka"
-	"github.com/ridge/limestone/kafka/mock"
-	"github.com/ridge/limestone/test"
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/client"
+	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/kafka/mock"
+	"github.com/dottedmag/limestone/test"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"
 )

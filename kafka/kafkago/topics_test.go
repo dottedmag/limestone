@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ridge/limestone/test"
+	"github.com/dottedmag/limestone/test"
 	"github.com/segmentio/kafka-go"
 	"github.com/stretchr/testify/require"
 )

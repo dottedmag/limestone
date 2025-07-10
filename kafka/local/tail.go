@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/ridge/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/ridge/must/v2"
 )
 

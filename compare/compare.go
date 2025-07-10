@@ -4,7 +4,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 )
 
 // Run consumes two streams of transactions up to and including the hot end (nil), and compares them. Each stream

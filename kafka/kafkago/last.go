@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ridge/limestone/retry"
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 	"time"

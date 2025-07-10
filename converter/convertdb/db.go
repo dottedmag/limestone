@@ -1,8 +1,8 @@
 package convertdb
 
 import (
-	"github.com/ridge/limestone/meta"
-	"github.com/ridge/limestone/typeddb"
+	"github.com/dottedmag/limestone/meta"
+	"github.com/dottedmag/limestone/typeddb"
 )
 
 // DB is an in-memory database for entities under upgrade

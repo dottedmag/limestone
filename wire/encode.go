@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/meta"
 )
 
 // Encode serializes a database update by encoding the difference between

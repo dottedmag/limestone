@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ridge/limestone/kafka"
-	"github.com/ridge/limestone/kafka/mock"
-	"github.com/ridge/limestone/test"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/kafka/mock"
+	"github.com/dottedmag/limestone/test"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"
 )

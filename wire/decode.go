@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/meta"
 )
 
 // Decode deserializes a database update by applying the difference to the

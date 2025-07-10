@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ridge/limestone/test"
-	"github.com/ridge/limestone/thttp"
-	"github.com/ridge/limestone/tnet"
+	"github.com/dottedmag/limestone/test"
+	"github.com/dottedmag/limestone/thttp"
+	"github.com/dottedmag/limestone/tnet"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"
 )

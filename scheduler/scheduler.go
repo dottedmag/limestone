@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"github.com/ridge/limestone/typeddb"
+	"github.com/dottedmag/limestone/typeddb"
 )
 
 // A Scheduler keeps track of many upcoming alarms associated with entities,

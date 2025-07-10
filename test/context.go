@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"time"
 )
 

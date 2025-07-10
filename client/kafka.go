@@ -8,9 +8,9 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/ridge/limestone/kafka"
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"go.uber.org/zap"

@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"go.uber.org/zap"
 )
 

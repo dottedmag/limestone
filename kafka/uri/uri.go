@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/kafkago"
-	"github.com/ridge/limestone/kafka/local"
-	"github.com/ridge/limestone/kafka/remote"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/kafkago"
+	"github.com/dottedmag/limestone/kafka/local"
+	"github.com/dottedmag/limestone/kafka/remote"
 )
 
 var brokerRE = regexp.MustCompile(`^[-.a-z0-9]+:\d+$`)

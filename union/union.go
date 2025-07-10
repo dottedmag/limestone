@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/limestone/indices"
+	"github.com/dottedmag/limestone/indices"
 	"github.com/ridge/must/v2"
 )
 

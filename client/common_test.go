@@ -3,7 +3,7 @@ package client
 import (
 	"encoding/json"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 )
 
 var (

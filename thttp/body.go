@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 )

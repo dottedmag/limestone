@@ -9,10 +9,10 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/wire"
-	"github.com/ridge/limestone/retry"
-	"github.com/ridge/limestone/tws"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/wire"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/limestone/tws"
 	"time"
 )
 

@@ -7,7 +7,7 @@ package isempty
 import (
 	"context"
 
-	"github.com/ridge/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/ridge/parallel"
 )
 

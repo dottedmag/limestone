@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ridge/limestone/retry"
+	"github.com/dottedmag/limestone/retry"
 	"github.com/ridge/parallel"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"

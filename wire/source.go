@@ -1,7 +1,7 @@
 package wire
 
 import (
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/meta"
 )
 
 // Source describes the submitter of a database update

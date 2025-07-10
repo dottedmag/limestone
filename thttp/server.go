@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/ridge/limestone/tcontext"
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tcontext"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"go.uber.org/zap"

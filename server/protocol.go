@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/tws"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/tws"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"go.uber.org/zap"

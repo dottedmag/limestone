@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ridge/limestone/test"
+	"github.com/dottedmag/limestone/test"
 	"github.com/stretchr/testify/require"
 )
 

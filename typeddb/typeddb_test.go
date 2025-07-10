@@ -3,8 +3,8 @@ package typeddb
 import (
 	"testing"
 
-	"github.com/ridge/limestone/indices"
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/meta"
 	"github.com/stretchr/testify/require"
 )
 

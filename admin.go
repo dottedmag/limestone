@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/limestone/client"
-	"github.com/ridge/limestone/kafka"
-	"github.com/ridge/limestone/meta"
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/client"
+	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/meta"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 )

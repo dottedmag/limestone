@@ -6,12 +6,12 @@ import (
 	"net"
 
 	"github.com/gorilla/mux"
-	"github.com/ridge/limestone/client"
-	"github.com/ridge/limestone/kafka"
-	"github.com/ridge/limestone/run"
-	"github.com/ridge/limestone/thttp"
-	"github.com/ridge/limestone/tnet"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/client"
+	"github.com/dottedmag/limestone/kafka"
+	"github.com/dottedmag/limestone/run"
+	"github.com/dottedmag/limestone/thttp"
+	"github.com/dottedmag/limestone/tnet"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/parallel"
 	"github.com/spf13/pflag"
 )

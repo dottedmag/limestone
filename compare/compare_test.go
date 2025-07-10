@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ridge/limestone/test"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/test"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/assert"

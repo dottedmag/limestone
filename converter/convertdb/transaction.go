@@ -3,8 +3,8 @@ package convertdb
 import (
 	"fmt"
 
-	"github.com/ridge/limestone/typeddb"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/typeddb"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 )
 

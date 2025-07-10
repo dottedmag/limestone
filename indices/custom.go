@@ -5,7 +5,7 @@ import (
 	"reflect"
 
 	"github.com/hashicorp/go-memdb"
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/meta"
 )
 
 type customIndexDef struct {

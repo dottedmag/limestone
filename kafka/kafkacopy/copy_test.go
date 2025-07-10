@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/mock"
-	"github.com/ridge/limestone/test"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/mock"
+	"github.com/dottedmag/limestone/test"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"
 	"time"

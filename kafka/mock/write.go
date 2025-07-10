@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/names"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/names"
 	"github.com/ridge/must/v2"
 	"time"
 )

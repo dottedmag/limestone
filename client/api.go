@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 )
 
 // A Connection represents a logical connection to Limestone (may or may not be

@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/parallel"
 	"go.uber.org/zap"
 )

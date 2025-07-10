@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"go.uber.org/zap"
 )
 

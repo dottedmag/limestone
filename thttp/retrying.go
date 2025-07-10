@@ -8,7 +8,7 @@ import (
 
 	"time"
 
-	"github.com/ridge/limestone/retry"
+	"github.com/dottedmag/limestone/retry"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"context"
 	"math/rand" // choosing a random member of Kafka replicaset - not security-sensitive
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"go.uber.org/zap"
 )
 

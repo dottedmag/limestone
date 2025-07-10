@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"github.com/ridge/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/api"
 )
 
 // Read implements the Read method of the kafka.Client interface (see

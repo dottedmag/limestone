@@ -9,9 +9,9 @@ import (
 	"path/filepath"
 	"syscall"
 
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/names"
-	"github.com/ridge/limestone/kafka/wire"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/names"
+	"github.com/dottedmag/limestone/kafka/wire"
 	"github.com/ridge/must/v2"
 	"time"
 )

@@ -8,7 +8,7 @@ import (
 	"net"
 	"syscall"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/parallel"
 	"go.uber.org/zap"
 )

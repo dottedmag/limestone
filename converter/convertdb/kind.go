@@ -3,9 +3,9 @@ package convertdb
 import (
 	"reflect"
 
-	"github.com/ridge/limestone/indices"
-	"github.com/ridge/limestone/meta"
-	"github.com/ridge/limestone/typeddb"
+	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/meta"
+	"github.com/dottedmag/limestone/typeddb"
 )
 
 // Kind describes a particular type of objects handled by the framework.

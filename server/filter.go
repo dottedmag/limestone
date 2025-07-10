@@ -1,6 +1,6 @@
 package server
 
-import "github.com/ridge/limestone/wire"
+import "github.com/dottedmag/limestone/wire"
 
 func compileFilter(filter wire.Filter) func(wire.Changes) wire.Changes {
 	if filter == nil {

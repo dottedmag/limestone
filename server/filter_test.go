@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/stretchr/testify/require"
 )
 

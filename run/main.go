@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"github.com/spf13/pflag"

@@ -1,10 +1,10 @@
 package kafka
 
 import (
-	"github.com/ridge/limestone/kafka/api"
-	"github.com/ridge/limestone/kafka/isempty"
-	"github.com/ridge/limestone/kafka/names"
-	"github.com/ridge/limestone/kafka/uri"
+	"github.com/dottedmag/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/isempty"
+	"github.com/dottedmag/limestone/kafka/names"
+	"github.com/dottedmag/limestone/kafka/uri"
 )
 
 // Client is the Kafka client interface

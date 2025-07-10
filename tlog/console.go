@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/ridge/limestone/tlog/formatter"
+	"github.com/dottedmag/limestone/tlog/formatter"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 	"go.uber.org/zap/buffer"

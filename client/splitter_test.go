@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/parallel"
 	"github.com/stretchr/testify/require"
 )

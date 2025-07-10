@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/ridge/limestone/tlog"
+	"github.com/dottedmag/limestone/tlog"
 	"go.uber.org/zap"
 	"time"
 )

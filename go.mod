@@ -1,4 +1,4 @@
-module github.com/ridge/limestone
+module github.com/dottedmag/limestone
 
 // Long-term fork, as Google is unlikely to remove AppEngine dependency from the library
 // https://github.com/golang/oauth2/issues/615

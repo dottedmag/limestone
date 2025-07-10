@@ -12,8 +12,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/ridge/limestone/retry"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/retry"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"github.com/ridge/parallel"
 	"golang.org/x/oauth2/google"

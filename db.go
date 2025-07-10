@@ -6,13 +6,13 @@ import (
 
 	"time"
 
-	"github.com/ridge/limestone/client"
-	"github.com/ridge/limestone/indices"
-	"github.com/ridge/limestone/meta"
-	"github.com/ridge/limestone/scheduler"
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/typeddb"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/client"
+	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/meta"
+	"github.com/dottedmag/limestone/scheduler"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/typeddb"
+	"github.com/dottedmag/limestone/wire"
 	"go.uber.org/zap"
 )
 

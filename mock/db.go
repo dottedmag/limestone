@@ -3,8 +3,8 @@ package mock
 import (
 	"context"
 
-	"github.com/ridge/limestone"
-	"github.com/ridge/limestone/typeddb"
+	"github.com/dottedmag/limestone"
+	"github.com/dottedmag/limestone/typeddb"
 )
 
 // DBReadOnly is a read-only typeddb to be use in unittests

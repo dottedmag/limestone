@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/ridge/limestone/kafka/api"
+	"github.com/dottedmag/limestone/kafka/api"
 )
 
 // Handler returns an HTTP handler that servers data from the given Kafka client

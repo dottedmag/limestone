@@ -5,8 +5,8 @@ import (
 	"reflect"
 
 	"github.com/hashicorp/go-memdb"
-	"github.com/ridge/limestone/indices"
-	"github.com/ridge/limestone/meta"
+	"github.com/dottedmag/limestone/indices"
+	"github.com/dottedmag/limestone/meta"
 )
 
 // Kind describes a particular type of objects handled by the framework.

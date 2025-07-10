@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/limestone/tlog"
-	"github.com/ridge/limestone/typeddb"
-	"github.com/ridge/limestone/wire"
+	"github.com/dottedmag/limestone/tlog"
+	"github.com/dottedmag/limestone/typeddb"
+	"github.com/dottedmag/limestone/wire"
 	"github.com/ridge/must/v2"
 	"go.uber.org/zap"
 )
