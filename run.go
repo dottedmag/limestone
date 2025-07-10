@@ -8,7 +8,7 @@ import (
 	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/typeddb"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"go.uber.org/zap"
 )
 

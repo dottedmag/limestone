@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/dottedmag/limestone/tlog/formatter"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"go.uber.org/zap"
 	"go.uber.org/zap/buffer"
 	"go.uber.org/zap/zapcore"

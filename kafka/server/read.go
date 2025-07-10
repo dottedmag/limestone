@@ -17,8 +17,8 @@ import (
 	"github.com/dottedmag/limestone/thttp"
 	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/tws"
-	"github.com/ridge/must/v2"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/must"
+	"github.com/dottedmag/parallel"
 	"go.uber.org/zap"
 )
 

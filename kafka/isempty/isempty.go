@@ -8,7 +8,7 @@ import (
 	"context"
 
 	"github.com/dottedmag/limestone/kafka/api"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 )
 
 // TopicIsEmpty finds out whether a Kafka topic is empty

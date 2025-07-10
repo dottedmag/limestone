@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 )
 
 // Transaction is a read-write view of the database.

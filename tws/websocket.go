@@ -14,7 +14,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/dottedmag/limestone/tlog"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"go.uber.org/zap"
 )
 

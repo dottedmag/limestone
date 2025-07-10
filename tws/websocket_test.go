@@ -9,7 +9,7 @@ import (
 	"github.com/dottedmag/limestone/test"
 	"github.com/dottedmag/limestone/thttp"
 	"github.com/dottedmag/limestone/tnet"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 )
 

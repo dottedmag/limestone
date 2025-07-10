@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dottedmag/limestone/retry"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 )

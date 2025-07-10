@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"runtime/debug"
 
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 )
 
 // runTask executes the task in the current goroutine, recovering from panics.

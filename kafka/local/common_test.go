@@ -9,8 +9,8 @@ import (
 
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/test"
-	"github.com/ridge/must/v2"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/must"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 )
 

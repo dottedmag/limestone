@@ -12,7 +12,7 @@ import (
 	"github.com/dottedmag/limestone/thttp"
 	"github.com/dottedmag/limestone/tnet"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/spf13/pflag"
 )
 

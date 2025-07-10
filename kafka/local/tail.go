@@ -8,7 +8,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/dottedmag/limestone/kafka/api"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 )
 
 type tailer struct {

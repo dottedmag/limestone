@@ -6,7 +6,7 @@ import (
 
 	"github.com/dottedmag/limestone/retry"
 	"github.com/dottedmag/limestone/tlog"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"go.uber.org/zap"
 	"time"
 )

@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/kevinpollet/nego"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 )
 
 func gzipCompress(r io.Reader) ([]byte, error) {

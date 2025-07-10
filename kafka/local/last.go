@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/dottedmag/limestone/kafka/api"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 )
 
 func (c client) LastOffset(ctx context.Context, topic string) (int64, error) {

@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 )
 
 func (c client) Topics(ctx context.Context) ([]string, error) {

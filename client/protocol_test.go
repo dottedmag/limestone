@@ -15,8 +15,8 @@ import (
 	"github.com/dottedmag/limestone/tnet"
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/must/v2"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/must"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 	"time"
 )

@@ -3,7 +3,7 @@ package wire
 import (
 	"sort"
 
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"go.uber.org/zap/zapcore"
 )
 

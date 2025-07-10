@@ -5,7 +5,7 @@ import (
 	"net"
 	"strings"
 
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"time"
 )
 

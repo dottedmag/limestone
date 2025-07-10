@@ -7,7 +7,7 @@ import (
 
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/test"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/segmentio/kafka-go"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"

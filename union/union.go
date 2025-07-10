@@ -24,7 +24,7 @@ import (
 	"reflect"
 
 	"github.com/dottedmag/limestone/indices"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 )
 
 type variant struct {

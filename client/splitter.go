@@ -5,7 +5,7 @@ import (
 	"sync"
 
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 )
 
 // A Splitter is a Client that feeds several connections from a single upstream

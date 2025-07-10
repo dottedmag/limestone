@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/ridge/must/v2"
-	"github.com/ridge/tj"
+	"github.com/dottedmag/must"
+	"github.com/dottedmag/tj"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap/buffer"

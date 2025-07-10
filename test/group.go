@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 	"time"
 )

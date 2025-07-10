@@ -11,7 +11,7 @@ import (
 	"github.com/dottedmag/limestone/kafka/mock"
 	"github.com/dottedmag/limestone/test"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 )
 

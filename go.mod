@@ -9,9 +9,6 @@ require (
 	github.com/gorilla/websocket v1.5.0
 	github.com/hashicorp/go-memdb v1.3.4
 	github.com/kevinpollet/nego v0.0.0-20211010160919-a65cd48cee43
-	github.com/ridge/must/v2 v2.0.0
-	github.com/ridge/parallel v0.1.1
-	github.com/ridge/tj v0.3.0
 	github.com/segmentio/kafka-go v0.4.40
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
@@ -26,6 +23,9 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dottedmag/must v1.0.0 // indirect
+	github.com/dottedmag/parallel v0.1.2 // indirect
+	github.com/dottedmag/tj v1.0.0 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect

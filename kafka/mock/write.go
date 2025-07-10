@@ -6,7 +6,7 @@ import (
 
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/kafka/names"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"time"
 )
 

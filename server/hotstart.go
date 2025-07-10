@@ -16,7 +16,7 @@ import (
 	"github.com/dottedmag/limestone/retry"
 	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2/google"
 )

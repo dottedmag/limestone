@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/parallel"
+	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
 )
 

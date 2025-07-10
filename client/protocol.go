@@ -15,7 +15,7 @@ import (
 	"github.com/dottedmag/limestone/tlog"
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/limestone/wire"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"go.uber.org/zap"
 	"time"
 )

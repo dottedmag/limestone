@@ -6,7 +6,7 @@ import (
 
 	"github.com/hashicorp/go-memdb"
 	"github.com/dottedmag/limestone/indices"
-	"github.com/ridge/must/v2"
+	"github.com/dottedmag/must"
 	"time"
 )
 
