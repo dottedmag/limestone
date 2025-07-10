@@ -1,10 +1,6 @@
 module github.com/dottedmag/limestone
 
-// Long-term fork, as Google is unlikely to remove AppEngine dependency from the library
-// https://github.com/golang/oauth2/issues/615
-replace golang.org/x/oauth2 => github.com/ridge/oauth2 v0.0.0-20221226133230-d000b8ba2a50
-
-go 1.20
+go 1.24.2
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0
@@ -22,12 +18,13 @@ require (
 	go.uber.org/zap v1.24.0
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20230622143659-64c3993f5c82
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
-	golang.org/x/oauth2 v0.9.0
+	golang.org/x/oauth2 v0.30.0
 	golang.org/x/sys v0.9.0
 	golang.org/x/term v0.9.0
 )
 
 require (
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/felixge/httpsnoop v1.0.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.0 // indirect
