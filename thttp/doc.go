@@ -18,8 +18,7 @@
 // thttp.Server.
 //
 // Note that only a single handler is passed to thttp.NewServer as its second
-// argument. Most use cases will need path-based routing. The standard solution
-// is to use github.com/gorilla/mux as in the example below.
+// argument. Most use cases will need path-based routing.
 //
 // # Example
 //
@@ -46,9 +45,9 @@
 //	            return errors.Wrap(err, "failed to run data server")
 //	        }
 //
-//	        router := mux.NewRouter()
-//	        router.HandleFunc("/data/{id}", getHandler(db)).Methods(http.MethodGet)
-//	        router.HandleFunc("/data/{id}", putHandler(db)).Methods(http.MethodPut)
+//	        router := http.NeWServeMux()
+//	        router.HandleFunc("GET /data/{id}", getHandler(db))
+//	        router.HandleFunc("PUT /data/{id}", putHandler(db))
 //
 //	        server := thttp.NewServer(listener,
 //	            thttp.Wrap(router, thttp.StandardMiddleware, thttp.LogBodies))

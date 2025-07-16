@@ -3,7 +3,6 @@ package server
 import (
 	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/dottedmag/limestone/kafka/api"
 )
 
@@ -15,12 +14,12 @@ import (
 func Handler(client api.Client) http.Handler {
 	h := handler{client: client}
 
-	router := mux.NewRouter()
-	router.Path("/kafka").Methods(http.MethodGet).HandlerFunc(h.topics)
-	router.Path("/kafka/{topic}").Methods(http.MethodGet).HandlerFunc(h.topic)
-	router.Path("/kafka/{topic}").Methods(http.MethodHead).HandlerFunc(h.topicInfo)
-	router.Path("/kafka/{topic}/{offset}").Methods(http.MethodGet).HandlerFunc(h.record)
-	return router
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /kafka", h.topics)
+	mux.HandleFunc("GET /kafka/{topic}", h.topic)
+	mux.HandleFunc("HEAD /kafka/{topic}", h.topicInfo)
+	mux.HandleFunc("GET /kafka/{topic}/{offset}", h.record)
+	return mux
 }
 
 type handler struct {

@@ -18,11 +18,10 @@ import (
 	"github.com/dottedmag/limestone/tws"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"github.com/gorilla/mux"
 )
 
 func (h handler) topicInfo(w http.ResponseWriter, r *http.Request) {
-	offset, err := h.client.LastOffset(r.Context(), mux.Vars(r)["topic"])
+	offset, err := h.client.LastOffset(r.Context(), r.PathValue("topic"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
@@ -67,7 +66,7 @@ func (h handler) topicPlain(w http.ResponseWriter, r *http.Request) {
 	err := parallel.Run(r.Context(), func(ctx context.Context, spawn parallel.SpawnFn) error {
 		messages := make(chan *api.IncomingMessage)
 		spawn("reader", parallel.Fail, func(ctx context.Context) error {
-			return h.client.Read(ctx, mux.Vars(r)["topic"], offset, messages)
+			return h.client.Read(ctx, r.PathValue("topic"), offset, messages)
 		})
 		spawn("writer", parallel.Exit, func(ctx context.Context) error {
 			var buf bytes.Buffer
@@ -143,14 +142,14 @@ func (h handler) topicWS(w http.ResponseWriter, r *http.Request) {
 			if offset == nil {
 				var err error
 				offset = new(int64)
-				*offset, err = h.client.LastOffset(r.Context(), mux.Vars(r)["topic"])
+				*offset, err = h.client.LastOffset(r.Context(), r.PathValue("topic"))
 				if err != nil {
 					return err
 				}
 			}
 			messages := make(chan *api.IncomingMessage)
 			spawn("reader", parallel.Fail, func(ctx context.Context) error {
-				return h.client.Read(ctx, mux.Vars(r)["topic"], *offset, messages)
+				return h.client.Read(ctx, r.PathValue("topic"), *offset, messages)
 			})
 			spawn("writer", parallel.Exit, func(ctx context.Context) error {
 				for {
@@ -191,7 +190,7 @@ func (h handler) topicWS(w http.ResponseWriter, r *http.Request) {
 
 // A single record in a topic, same format as local kafka
 func (h handler) record(w http.ResponseWriter, r *http.Request) {
-	offset, err := strconv.ParseInt(mux.Vars(r)["offset"], 10, 64)
+	offset, err := strconv.ParseInt(r.PathValue("offset"), 10, 64)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
@@ -199,7 +198,7 @@ func (h handler) record(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	last, err := h.client.LastOffset(r.Context(), mux.Vars(r)["topic"])
+	last, err := h.client.LastOffset(r.Context(), r.PathValue("topic"))
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		if _, err := w.Write([]byte(err.Error())); err != nil {
@@ -214,7 +213,7 @@ func (h handler) record(w http.ResponseWriter, r *http.Request) {
 	_ = parallel.Run(r.Context(), func(ctx context.Context, spawn parallel.SpawnFn) error {
 		messages := make(chan *api.IncomingMessage)
 		spawn("reader", parallel.Fail, func(ctx context.Context) error {
-			return h.client.Read(ctx, mux.Vars(r)["topic"], offset, messages)
+			return h.client.Read(ctx, r.PathValue("topic"), offset, messages)
 		})
 		spawn("writer", parallel.Exit, func(ctx context.Context) error {
 			select {

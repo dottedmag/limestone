@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"net/http"
 
-	"github.com/gorilla/mux"
 	"github.com/dottedmag/limestone/client"
 	"github.com/dottedmag/limestone/kafka"
 	"github.com/dottedmag/limestone/run"
@@ -69,10 +69,10 @@ func Run(ctx context.Context, config Config) error {
 		}
 	}
 
-	router := mux.NewRouter()
-	router.HandleFunc("/pull", server.pull)
-	router.HandleFunc("/push", server.push)
-	httpServer := thttp.NewServer(config.Listener, thttp.StandardMiddleware(router))
+	mux := http.NewServeMux()
+	mux.HandleFunc("/pull", server.pull)
+	mux.HandleFunc("/push", server.push)
+	httpServer := thttp.NewServer(config.Listener, thttp.StandardMiddleware(mux))
 
 	return parallel.Run(ctx, func(ctx context.Context, spawn parallel.SpawnFn) error {
 		spawn("server", parallel.Fail, server.Run)

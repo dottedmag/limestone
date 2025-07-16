@@ -9,7 +9,8 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/gorilla/mux"
+	"time"
+
 	"github.com/dottedmag/limestone/test"
 	"github.com/dottedmag/limestone/thttp"
 	"github.com/dottedmag/limestone/tnet"
@@ -18,7 +19,6 @@ import (
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
 	"github.com/stretchr/testify/require"
-	"time"
 )
 
 type protocolTestEnv struct {
@@ -43,7 +43,7 @@ func protocolTestSetup(t *testing.T) *protocolTestEnv {
 	down := make(chan *wire.IncomingTransaction, 1)
 	drop := make(chan struct{}, 1)
 
-	router := mux.NewRouter()
+	router := http.NewServeMux()
 	router.HandleFunc("/pull", func(w http.ResponseWriter, r *http.Request) {
 		tws.Serve(w, r, tws.StreamerConfig, func(ctx context.Context, incoming <-chan tws.Message, outgoing chan<- tws.Message) error {
 			select {

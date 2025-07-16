@@ -6,7 +6,6 @@ require (
 	github.com/dottedmag/must v1.0.0
 	github.com/dottedmag/parallel v0.1.2
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/hashicorp/go-memdb v1.3.5
 	github.com/kevinpollet/nego v0.0.0-20211010160919-a65cd48cee43
