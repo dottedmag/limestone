@@ -11,6 +11,7 @@ import (
 
 	"time"
 
+	"github.com/alecthomas/assert/v2"
 	"github.com/dottedmag/limestone/test"
 	"github.com/dottedmag/limestone/thttp"
 	"github.com/dottedmag/limestone/tnet"
@@ -18,7 +19,6 @@ import (
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"github.com/stretchr/testify/require"
 )
 
 type protocolTestEnv struct {
@@ -132,50 +132,50 @@ func TestProtocolPull(t *testing.T) {
 	env := protocolTestSetup(t)
 
 	_, incoming := env.spawnConnection(1, wire.Position("0000000000000001-0000000000000002-0000000000000003"), wire.Filter{"apple": []string{"Color"}})
-	require.Equal(t, wire.Request{Version: 1, Last: wire.Position("0000000000000001-0000000000000002-0000000000000003"), Filter: wire.Filter{"apple": []string{"Color"}}}, <-env.conn)
+	assert.Equal(t, wire.Request{Version: 1, Last: wire.Position("0000000000000001-0000000000000002-0000000000000003"), Filter: wire.Filter{"apple": []string{"Color"}}}, <-env.conn)
 
 	env.down <- &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000001-0000000000000002-0000000000000004")}
-	require.Equal(t, &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000001-0000000000000002-0000000000000004")}, <-incoming)
+	assert.Equal(t, &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000001-0000000000000002-0000000000000004")}, <-incoming)
 	env.down <- nil
-	require.Nil(t, <-incoming)
+	assert.Zero(t, <-incoming)
 }
 
 func TestProtocolPush(t *testing.T) {
 	env := protocolTestSetup(t)
 
 	conn, _ := env.spawnConnection(1, wire.Beginning, nil)
-	require.Equal(t, wire.Request{Version: 1}, <-env.conn)
+	assert.Equal(t, wire.Request{Version: 1}, <-env.conn)
 
-	require.NoError(t, conn.Submit(env.group.Context(), testTxn1))
-	require.Equal(t, testTxn1, <-env.up)
+	assert.NoError(t, conn.Submit(env.group.Context(), testTxn1))
+	assert.Equal(t, testTxn1, <-env.up)
 }
 
 func TestProtocolPushMismatch(t *testing.T) {
 	env := protocolTestSetup(t)
 
 	conn, _, res := env.spawnConnectionFail(2, wire.Beginning, nil)
-	require.Equal(t, wire.Request{Version: 2}, <-env.conn)
+	assert.Equal(t, wire.Request{Version: 2}, <-env.conn)
 
-	require.Error(t, <-res, wire.ErrVersionMismatch(2, 1).Error())
-	require.EqualError(t, conn.Submit(env.group.Context(), testTxn1), wire.ErrVersionMismatch(2, 1).Error())
+	assert.Error(t, <-res, wire.ErrVersionMismatch(2, 1).Error())
+	assert.EqualError(t, conn.Submit(env.group.Context(), testTxn1), wire.ErrVersionMismatch(2, 1).Error())
 }
 
 func TestProtocolRetry(t *testing.T) {
 	env := protocolTestSetup(t)
 
 	_, incoming := env.spawnConnection(1, wire.Beginning, nil)
-	require.Equal(t, wire.Request{Version: 1}, <-env.conn)
+	assert.Equal(t, wire.Request{Version: 1}, <-env.conn)
 
 	env.down <- &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000000-0000000000000000-0000000000000000")}
-	require.Equal(t, &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000000-0000000000000000-0000000000000000")}, <-incoming)
+	assert.Equal(t, &wire.IncomingTransaction{Transaction: testTxn1, Position: wire.Position("0000000000000000-0000000000000000-0000000000000000")}, <-incoming)
 	env.down <- nil
-	require.Nil(t, <-incoming)
+	assert.Zero(t, <-incoming)
 
 	env.drop <- struct{}{}
-	require.Equal(t, wire.Request{Version: 1, Last: wire.Position("0000000000000000-0000000000000000-0000000000000000")}, <-env.conn)
+	assert.Equal(t, wire.Request{Version: 1, Last: wire.Position("0000000000000000-0000000000000000-0000000000000000")}, <-env.conn)
 
 	env.down <- &wire.IncomingTransaction{Transaction: testTxn2, Position: wire.Position("0000000000000000-0000000000000000-0000000000000001")}
-	require.Equal(t, &wire.IncomingTransaction{Transaction: testTxn2, Position: wire.Position("0000000000000000-0000000000000000-0000000000000001")}, <-incoming)
+	assert.Equal(t, &wire.IncomingTransaction{Transaction: testTxn2, Position: wire.Position("0000000000000000-0000000000000000-0000000000000001")}, <-incoming)
 	env.down <- nil
-	require.Nil(t, <-incoming)
+	assert.Nil(t, <-incoming)
 }

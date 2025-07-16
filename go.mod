@@ -3,6 +3,7 @@ module github.com/dottedmag/limestone
 go 1.24.2
 
 require (
+	github.com/alecthomas/assert/v2 v2.11.0
 	github.com/dottedmag/must v1.0.0
 	github.com/dottedmag/parallel v0.1.2
 	github.com/fsnotify/fsnotify v1.9.0
@@ -18,9 +19,11 @@ require (
 
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
+	github.com/alecthomas/repr v0.4.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
+	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect

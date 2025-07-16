@@ -4,9 +4,9 @@ import (
 	"context"
 	"testing"
 
+	"github.com/alecthomas/assert/v2"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/parallel"
-	"github.com/stretchr/testify/require"
 )
 
 func TestSplitter(t *testing.T) {
@@ -24,43 +24,43 @@ func TestSplitter(t *testing.T) {
 	})
 	env.group.Spawn("splitter", parallel.Fail, splitter.Run)
 
-	require.NoError(t, PublishKafkaManifest(env.group.Context(), env.kafka, wire.Manifest{Topic: "txlog"}))
-	require.Nil(t, <-incoming1)
-	require.Nil(t, <-incoming2)
+	assert.NoError(t, PublishKafkaManifest(env.group.Context(), env.kafka, wire.Manifest{Topic: "txlog"}))
+	assert.Zero(t, <-incoming1)
+	assert.Zero(t, <-incoming2)
 
-	require.NoError(t, conn1.Submit(env.group.Context(), testTxn1))
+	assert.NoError(t, conn1.Submit(env.group.Context(), testTxn1))
 	in1 := <-incoming1
-	require.Equal(t, wire.Position("0000000000000000-0000000000000000"), in1.Position)
-	require.NotZero(t, in1.TS)
-	require.Equal(t, testTxn1.Source, in1.Source)
-	require.Equal(t, testTxn1.Session, in1.Session)
-	require.Equal(t, testTxn1.Changes, in1.Changes)
+	assert.Equal(t, wire.Position("0000000000000000-0000000000000000"), in1.Position)
+	assert.NotZero(t, in1.TS)
+	assert.Equal(t, testTxn1.Source, in1.Source)
+	assert.Equal(t, testTxn1.Session, in1.Session)
+	assert.Equal(t, testTxn1.Changes, in1.Changes)
 	in2 := <-incoming2
-	require.Equal(t, wire.Position("0000000000000000-0000000000000000"), in2.Position)
-	require.NotZero(t, in2.TS)
-	require.Equal(t, testTxn1.Source, in2.Source)
-	require.Equal(t, testTxn1.Session, in2.Session)
-	require.Equal(t, testTxn1.Changes, in2.Changes)
-	require.Equal(t, in1.TS, in2.TS)
-	require.Nil(t, <-incoming1)
-	require.Nil(t, <-incoming2)
+	assert.Equal(t, wire.Position("0000000000000000-0000000000000000"), in2.Position)
+	assert.NotZero(t, in2.TS)
+	assert.Equal(t, testTxn1.Source, in2.Source)
+	assert.Equal(t, testTxn1.Session, in2.Session)
+	assert.Equal(t, testTxn1.Changes, in2.Changes)
+	assert.Equal(t, in1.TS, in2.TS)
+	assert.Zero(t, <-incoming1)
+	assert.Zero(t, <-incoming2)
 
-	require.NoError(t, conn2.Submit(env.group.Context(), testTxn2))
+	assert.NoError(t, conn2.Submit(env.group.Context(), testTxn2))
 	in1 = <-incoming1
-	require.Equal(t, wire.Position("0000000000000000-0000000000000001"), in1.Position)
-	require.NotZero(t, in1.TS)
-	require.Equal(t, testTxn2.Source, in1.Source)
-	require.Equal(t, testTxn2.Session, in1.Session)
-	require.Equal(t, testTxn2.Changes, in1.Changes)
+	assert.Equal(t, wire.Position("0000000000000000-0000000000000001"), in1.Position)
+	assert.NotZero(t, in1.TS)
+	assert.Equal(t, testTxn2.Source, in1.Source)
+	assert.Equal(t, testTxn2.Session, in1.Session)
+	assert.Equal(t, testTxn2.Changes, in1.Changes)
 	in2 = <-incoming2
-	require.Equal(t, wire.Position("0000000000000000-0000000000000001"), in2.Position)
-	require.NotZero(t, in2.TS)
-	require.Equal(t, testTxn2.Source, in2.Source)
-	require.Equal(t, testTxn2.Session, in2.Session)
-	require.Equal(t, testTxn2.Changes, in2.Changes)
-	require.Equal(t, in1.TS, in2.TS)
-	require.Nil(t, <-incoming1)
-	require.Nil(t, <-incoming2)
+	assert.Equal(t, wire.Position("0000000000000000-0000000000000001"), in2.Position)
+	assert.NotZero(t, in2.TS)
+	assert.Equal(t, testTxn2.Source, in2.Source)
+	assert.Equal(t, testTxn2.Session, in2.Session)
+	assert.Equal(t, testTxn2.Changes, in2.Changes)
+	assert.Equal(t, in1.TS, in2.TS)
+	assert.Zero(t, <-incoming1)
+	assert.Zero(t, <-incoming2)
 }
 
 func TestFilterUnion(t *testing.T) {
@@ -79,18 +79,18 @@ func TestFilterUnion(t *testing.T) {
 
 	var f wire.Filter
 	filterUnion(&f, f1)
-	require.Nil(t, f)
+	assert.Zero(t, f)
 
 	f = f1
 	filterUnion(&f, nil)
-	require.Nil(t, f)
+	assert.Zero(t, f)
 
 	f = f1
 	filterUnion(&f, f1)
-	require.Equal(t, f1, f)
+	assert.Equal(t, f1, f)
 
 	filterUnion(&f, f2)
-	require.Equal(t, wire.Filter{
+	assert.Equal(t, wire.Filter{
 		"foo": nil,
 		"bar": []string{"a", "b", "c"},
 		"baz": nil,

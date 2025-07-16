@@ -3,15 +3,16 @@ package compare
 import (
 	"context"
 	"encoding/json"
+	"reflect"
 	"testing"
 
+	"time"
+
+	"github.com/alecthomas/assert/v2"
 	"github.com/dottedmag/limestone/test"
 	"github.com/dottedmag/limestone/wire"
 	"github.com/dottedmag/must"
 	"github.com/dottedmag/parallel"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
-	"time"
 )
 
 func TestCompareBehaviorTxn(t *testing.T) {
@@ -132,16 +133,16 @@ func TestCompareBehaviorTxn(t *testing.T) {
 
 	select {
 	case _, ok := <-tapTxn:
-		require.False(t, ok)
+		assert.False(t, ok)
 	case <-g.Done():
-		require.NoError(t, g.Wait())
+		assert.NoError(t, g.Wait())
 	}
 
 	select {
 	case _, ok := <-tapDif:
-		require.False(t, ok)
+		assert.False(t, ok)
 	case <-g.Done():
-		require.NoError(t, g.Wait())
+		assert.NoError(t, g.Wait())
 	}
 }
 
@@ -184,16 +185,16 @@ func TestComparePerformance(t *testing.T) {
 	for i := 0; i < count; i++ {
 		select {
 		case <-deadline:
-			require.FailNow(t, "reached timeout")
+			t.Fatal("reached timeout")
 		case v := <-tapTxn:
-			require.Equal(t, Unchanged, v.Type)
+			assert.Equal(t, Unchanged, v.Type)
 		}
 	}
 	if _, open := <-tapDif; open {
-		require.FailNow(t, "entities tap is not closed")
+		t.Fatal("entities tap is not closed")
 	}
 	if _, open := <-tapTxn; open {
-		require.FailNow(t, "transactions tap is not closed")
+		t.Fatal("transactions tap is not closed")
 	}
 }
 
@@ -263,27 +264,36 @@ func TestUnequalEntities(t *testing.T) {
 	}
 	diffs := unequalEntities(changesOld, changesNew)
 
-	assert.Len(t, diffs, 4)
-	assert.Contains(t, diffs, Difference{
+	assert.Equal(t, 4, len(diffs))
+	assert.True(t, containsDiff(diffs, Difference{
 		ID:      "id1",
 		Kind:    "kind1",
 		DiffOld: changesOld["kind1"]["id1"],
-	})
-	assert.Contains(t, diffs, Difference{
+	}))
+	assert.True(t, containsDiff(diffs, Difference{
 		ID:      "id2",
 		Kind:    "kind2",
 		DiffNew: changesNew["kind2"]["id2"],
-	})
-	assert.Contains(t, diffs, Difference{
+	}))
+	assert.True(t, containsDiff(diffs, Difference{
 		ID:      "idboth2",
 		Kind:    "kindboth",
 		DiffNew: changesNew["kindboth"]["idboth2"],
 		DiffOld: changesOld["kindboth"]["idboth2"],
-	})
-	assert.Contains(t, diffs, Difference{
+	}))
+	assert.True(t, containsDiff(diffs, Difference{
 		ID:      "idboth3",
 		Kind:    "kindboth",
 		DiffNew: changesNew["kindboth"]["idboth3"],
 		DiffOld: changesOld["kindboth"]["idboth3"],
-	})
+	}))
+}
+
+func containsDiff(haystack []Difference, needle Difference) bool {
+	for _, h := range haystack {
+		if reflect.DeepEqual(h, needle) {
+			return true
+		}
+	}
+	return false
 }
