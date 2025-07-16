@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"slices"
 	"sync"
 
 	"github.com/dottedmag/limestone/wire"
@@ -173,14 +174,7 @@ func filterUnion(a *wire.Filter, b wire.Filter) {
 				continue
 			}
 			for _, p2 := range props2 {
-				found := false
-				for _, p1 := range props1 {
-					if p1 == p2 {
-						found = true
-						break
-					}
-				}
-				if !found {
+				if !slices.Contains(props1, p2) {
 					props1 = append(props1, p2)
 				}
 			}
