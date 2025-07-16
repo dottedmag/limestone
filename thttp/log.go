@@ -3,7 +3,6 @@ package thttp
 import (
 	"log/slog"
 	"net/http"
-
 	"time"
 
 	"github.com/dottedmag/limestone/llog"

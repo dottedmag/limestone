@@ -1,11 +1,9 @@
 package thttp
 
 import (
-	"context"
 	"errors"
 	"log/slog"
 	"net/http"
-	"net/http/httptest"
 
 	"github.com/dottedmag/limestone/llog"
 )
@@ -27,20 +25,6 @@ func WithRequestsLogging(client *http.Client) *http.Client {
 		CheckRedirect: checkRedirect,
 		// FIXME (eyal): client timeout and jar are ignored
 	}
-}
-
-func checkRedirect(req *http.Request, via []*http.Request) error {
-	if len(via) > 10 {
-		return errors.New("request was terminated after 10 redirects")
-	}
-	// Go's http client removes Authorization from following request
-	// https://github.com/golang/go/issues/35104
-	for k, v := range via[0].Header {
-		if _, exists := req.Header[k]; !exists {
-			req.Header[k] = v
-		}
-	}
-	return nil
 }
 
 // RoundTrip is an implementation of RoundTripper.
@@ -94,19 +78,16 @@ func (t *LoggingTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 	return resp, err
 }
 
-// Test processes an http.Request (usually obtained from httptest.NewRequest)
-// with the given handler as if it was received on the network. Only useful in
-// tests.
-//
-// Does not require a running HTTP server to be running.
-func Test(handler http.Handler, r *http.Request) *http.Response {
-	w := httptest.NewRecorder()
-	handler.ServeHTTP(w, r)
-	return w.Result()
-}
-
-// TestCtx is similar to Test, except that the given context is injected into
-// the request
-func TestCtx(ctx context.Context, handler http.Handler, r *http.Request) *http.Response {
-	return Test(handler, r.WithContext(ctx))
+func checkRedirect(req *http.Request, via []*http.Request) error {
+	if len(via) > 10 {
+		return errors.New("request was terminated after 10 redirects")
+	}
+	// Go's http client removes Authorization from following request
+	// https://github.com/golang/go/issues/35104
+	for k, v := range via[0].Header {
+		if _, exists := req.Header[k]; !exists {
+			req.Header[k] = v
+		}
+	}
+	return nil
 }

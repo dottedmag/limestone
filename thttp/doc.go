@@ -72,14 +72,6 @@
 //
 //	router.Use(thttp.CORS)
 //
-// To apply a handler to all requests handled by the server, which is
-// the most common use case, it's convenient to use thttp.Wrap function.
-// This function takes any number of middleware, which are applied in
-// order so that the first one listed is the first to see the incoming request.
-//
-//	server := thttp.NewServer(listener,
-//	    thttp.Wrap(handler, thttp.StandardMiddleware, thttp.LogBodies))
-//
 // It is recommended to include at least thttp.StandardMiddleware, and put it
 // first. This single middleware is equivalent to listing thttp.Log,
 // thttp.Recover and thttp.CORS, in this order. It does not include LogBodies

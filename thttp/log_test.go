@@ -23,7 +23,7 @@ func TestLog(t *testing.T) {
 
 	r := httptest.NewRequest(http.MethodPost, "http://localhost", nil).WithContext(ctx)
 	r.Body = io.NopCloser(strings.NewReader("hello"))
-	res := TestCtx(ctx, handler, r)
+	res := RoundTripContext(ctx, handler, r)
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	body, err := io.ReadAll(res.Body)
 	assert.NoError(t, err)

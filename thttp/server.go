@@ -7,7 +7,6 @@ import (
 	"net"
 	"net/http"
 	"sync"
-
 	"time"
 
 	"github.com/dottedmag/limestone/llog"
@@ -131,15 +130,6 @@ func (s *Server) lock(next http.Handler) http.Handler {
 		defer s.locked.Done()
 		next.ServeHTTP(w, r)
 	})
-}
-
-// Wrap installs a number of middleware on HTTP handler. The first
-// middleware listed will be the first one to see the request.
-func Wrap(handler http.Handler, mw ...func(http.Handler) http.Handler) http.Handler {
-	for i := len(mw) - 1; i >= 0; i-- {
-		handler = mw[i](handler)
-	}
-	return handler
 }
 
 // StandardMiddleware is a composition of typically used middleware, in the

@@ -3,10 +3,54 @@ package thttp
 import (
 	"bytes"
 	"io"
+	"log/slog"
+	"net/http"
 	"testing"
 
+	"github.com/dottedmag/limestone/llog"
 	"github.com/stretchr/testify/require"
 )
+
+// LogBodies is a middleware that logs request and response bodies.
+//
+// Only has an effect when debug logging is enabled.
+func LogBodies(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		logger := llog.MustGet(req.Context())
+		if !logger.Enabled(req.Context(), slog.LevelDebug) {
+			next.ServeHTTP(w, req)
+			return
+		}
+
+		if shouldLogBody(req.Header) {
+			req.Body = createReadCloserCapture(req.Body, func(p []byte, _ bool) {
+				logger.Debug("HTTP request body", slog.String("contentType", contentType(req.Header)), slog.String("requestData", string(p)))
+			})
+		}
+
+		crw := &captureResponseWriter{ResponseWriter: w}
+		// FIXME (eyal): flusher interface is ignored
+		if h, ok := w.(http.Hijacker); ok {
+			crw.Hijacker = h
+		}
+		next.ServeHTTP(crw, req)
+		if shouldLogBody(crw.ResponseWriter.Header()) {
+			logger.Debug("HTTP response body", slog.String("contentType", contentType(crw.ResponseWriter.Header())), slog.String("body", string(crw.buff.Bytes())))
+		}
+	})
+}
+
+type captureResponseWriter struct {
+	http.ResponseWriter
+	http.Hijacker
+	buff bytes.Buffer
+}
+
+func (crw *captureResponseWriter) Write(p []byte) (int, error) {
+	n, err := crw.ResponseWriter.Write(p)
+	appendToBuffer(&crw.buff, p, n)
+	return n, err
+}
 
 var testBytes = []byte("this is a body")
 

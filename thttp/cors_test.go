@@ -19,7 +19,7 @@ func TestCORS(t *testing.T) {
 	r := httptest.NewRequest(http.MethodOptions, "http://localhost", nil)
 	r.Header.Set("Origin", "http://someorigin")
 	r.Header.Set("Access-Control-Request-Method", http.MethodGet)
-	res := Test(handler, r)
+	res := RoundTrip(handler, r)
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	assert.Equal(t, "*", strings.Join(res.Header["Access-Control-Allow-Origin"], ","))
 	body, err := io.ReadAll(res.Body)
@@ -29,7 +29,7 @@ func TestCORS(t *testing.T) {
 
 	r = httptest.NewRequest(http.MethodGet, "http://localhost", nil)
 	r.Header.Set("Origin", "http://someorigin")
-	res = Test(handler, r)
+	res = RoundTrip(handler, r)
 	assert.Equal(t, http.StatusOK, res.StatusCode)
 	assert.Equal(t, strings.Join(exposedHeaders, ","), strings.Join(res.Header["Access-Control-Expose-Headers"], ","))
 	assert.Equal(t, "*", strings.Join(res.Header["Access-Control-Allow-Origin"], ","))
