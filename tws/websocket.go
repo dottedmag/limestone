@@ -246,11 +246,3 @@ func handleSession(ctx context.Context, ws *websocket.Conn, config Config, sessi
 		return nil
 	})
 }
-
-// WithWSScheme changes http to ws and https to wss
-func WithWSScheme(addr string) string {
-	if !strings.HasPrefix(addr, "http://") && !strings.HasPrefix(addr, "https://") {
-		panic("no scheme in address")
-	}
-	return strings.Replace(addr, "http", "ws", 1)
-}
