@@ -6,7 +6,6 @@ require (
 	github.com/dottedmag/must v1.0.0
 	github.com/dottedmag/parallel v0.1.2
 	github.com/fsnotify/fsnotify v1.9.0
-	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.3
 	github.com/hashicorp/go-memdb v1.3.5
@@ -21,7 +20,6 @@ require (
 require (
 	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect

@@ -137,7 +137,6 @@ func (s *Server) lock(next http.Handler) http.Handler {
 //
 // 1. Log (log before and after the request)
 // 2. Recover (catch and log panic, then shut down the server)
-// 3. CORS (allow cross-origin requests)
 func StandardMiddleware(next http.Handler) http.Handler {
-	return Log(Recover(CORS(next)))
+	return Log(Recover(next))
 }
