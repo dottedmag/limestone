@@ -3,11 +3,11 @@ package kafkago
 import (
 	"context"
 	"fmt"
+	"maps"
+	"slices"
 
 	"github.com/dottedmag/limestone/retry"
 	"github.com/dottedmag/parallel"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
 func (c *client) Topics(ctx context.Context) (res []string, err error) {
@@ -40,8 +40,7 @@ func (c *client) listTopics(ctx context.Context) (res []string, err error) {
 			for _, p := range partitions {
 				topics[p.Topic] = true
 			}
-			res = maps.Keys(topics)
-			slices.Sort(res)
+			res = slices.Sorted(maps.Keys(topics))
 			return nil
 		})
 		spawn("closer", parallel.Fail, func(ctx context.Context) error {

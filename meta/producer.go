@@ -1,10 +1,9 @@
 package meta
 
 import (
+	"maps"
+	"slices"
 	"strings"
-
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
 // Producer is a generic service name
@@ -16,9 +15,7 @@ type ProducerSet map[Producer]bool
 // String implements fmt.Stringer
 func (ps ProducerSet) String() string {
 	var res string
-	psKeys := maps.Keys(ps)
-	slices.Sort(psKeys)
-	for _, p := range psKeys {
+	for _, p := range slices.Sorted(maps.Keys(ps)) {
 		if res != "" {
 			res += "|"
 		}

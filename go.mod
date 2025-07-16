@@ -15,7 +15,6 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20230622143659-64c3993f5c82
-	golang.org/x/exp v0.0.0-20250711185948-6ae5c78190dc
 	golang.org/x/oauth2 v0.30.0
 )
 
