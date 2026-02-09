@@ -161,6 +161,8 @@ func (db *DB) process(ctx context.Context, ch <-chan *wire.IncomingTransaction) 
 						logger.Debug("Waking up for the first time", slog.Int("entities", len(entities)))
 					}
 
+					db.wakeUp(ctx, txn, entities)
+
 					if err := db.submit(ctx, tc); err != nil {
 						return err
 					}
