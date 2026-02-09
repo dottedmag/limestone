@@ -20,7 +20,7 @@ type testEnv struct {
 	group *parallel.Group
 	dir   string
 
-	client api.Client
+	client api.ClientBackdate
 }
 
 func setupTest(t *testing.T) *testEnv {

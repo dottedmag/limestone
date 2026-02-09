@@ -21,23 +21,20 @@ func TestChat(t *testing.T) {
 
 	require.Nil(t, <-messagesBar)
 
-	require.NoError(t, env.client.Write(env.group.Context(), "foo", []api.Message{
+	require.NoError(t, env.client.WriteBackdated(env.group.Context(), "foo", []api.IncomingMessage{
 		{
-			Topic: "foo",
-			Key:   "666",
-			Value: []byte("FOO-666"),
+			Message: api.Message{Topic: "foo", Key: "666", Value: []byte("FOO-666")},
+			Time:    testTime,
 		},
 		{
-			Topic: "foo",
-			Key:   "777",
-			Value: []byte("FOO-777"),
+			Message: api.Message{Topic: "foo", Key: "777", Value: []byte("FOO-777")},
+			Time:    testTime,
 		},
 	}))
-	require.NoError(t, env.client.Write(env.group.Context(), "bar", []api.Message{
+	require.NoError(t, env.client.WriteBackdated(env.group.Context(), "bar", []api.IncomingMessage{
 		{
-			Topic:   "bar",
-			Headers: map[string]string{"a": "b", "c": "d"},
-			Value:   []byte("BAR"),
+			Message: api.Message{Topic: "bar", Headers: map[string]string{"a": "b", "c": "d"}, Value: []byte("BAR")},
+			Time:    testTime,
 		},
 	}))
 
@@ -76,10 +73,10 @@ func TestChat(t *testing.T) {
 	}, <-messagesFoo)
 	require.Nil(t, <-messagesFoo)
 
-	require.NoError(t, env.client.Write(env.group.Context(), "bar", []api.Message{
+	require.NoError(t, env.client.WriteBackdated(env.group.Context(), "bar", []api.IncomingMessage{
 		{
-			Topic: "bar",
-			Value: []byte{},
+			Message: api.Message{Topic: "bar", Value: []byte{}},
+			Time:    testTime,
 		},
 	}))
 
