@@ -177,5 +177,5 @@ func TestProtocolRetry(t *testing.T) {
 	env.down <- &wire.IncomingTransaction{Transaction: testTxn2, Position: wire.Position("0000000000000000-0000000000000000-0000000000000001")}
 	assert.Equal(t, &wire.IncomingTransaction{Transaction: testTxn2, Position: wire.Position("0000000000000000-0000000000000000-0000000000000001")}, <-incoming)
 	env.down <- nil
-	assert.Nil(t, <-incoming)
+	assert.Zero(t, <-incoming)
 }
