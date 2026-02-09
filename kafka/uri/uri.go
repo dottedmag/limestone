@@ -10,7 +10,9 @@ import (
 	"github.com/dottedmag/limestone/kafka/api"
 	"github.com/dottedmag/limestone/kafka/kafkago"
 	"github.com/dottedmag/limestone/kafka/local"
+	lnats "github.com/dottedmag/limestone/kafka/nats"
 	"github.com/dottedmag/limestone/kafka/remote"
+	"github.com/nats-io/nats.go"
 )
 
 var brokerRE = regexp.MustCompile(`^[-.a-z0-9]+:\d+$`)
@@ -20,6 +22,10 @@ var brokerRE = regexp.MustCompile(`^[-.a-z0-9]+:\d+$`)
 // kafka://broker1:port1,broker2:port2,...
 //
 //	A real Kafka client that uses the specified brokers.
+//
+// nats://server1:port1,server2:port2,...
+//
+//	A NATS JetStream client that uses the specified servers.
 //
 // file:///path
 //
@@ -47,6 +53,31 @@ func FromURI(uri string) (api.Client, error) {
 		}
 		return kafkago.New(brokers), nil
 
+	case "nats":
+		if u.Path != "" {
+			return nil, fmt.Errorf("failed to create client for URI %s: nats://server1:port1,server2:port2... expected", uri)
+		}
+		servers := strings.Split(u.Host, ",")
+		for _, s := range servers {
+			if !brokerRE.MatchString(s) {
+				return nil, fmt.Errorf("failed to create client for URI %s: nats://server1:port1,server2:port2... expected", uri)
+			}
+		}
+		urls := make([]string, len(servers))
+		for i, s := range servers {
+			urls[i] = "nats://" + s
+		}
+		nc, err := nats.Connect(strings.Join(urls, ","))
+		if err != nil {
+			return nil, fmt.Errorf("failed to create client for URI %s: %w", uri, err)
+		}
+		client, err := lnats.New(nc)
+		if err != nil {
+			nc.Close()
+			return nil, fmt.Errorf("failed to create client for URI %s: %w", uri, err)
+		}
+		return client, nil
+
 	case "http":
 		if u.Path != "" {
 			return nil, fmt.Errorf("failed to create Kafka client for URI %s: http://server[:port] or https://server[:port] expected", uri)
@@ -64,6 +95,6 @@ func FromURI(uri string) (api.Client, error) {
 		return client, nil
 
 	default:
-		return nil, fmt.Errorf("failed to create Kafka client for URI %s: kafka://..., http://..., https://... or file:///... expected", uri)
+		return nil, fmt.Errorf("failed to create client for URI %s: kafka://..., nats://..., http://..., https://... or file:///... expected", uri)
 	}
 }
